@@ -1,0 +1,73 @@
+[   
+
+
+
+{
+    "metaheuristic": "GA",
+        "population_size": "30",
+        "max_generations": "10",
+        "elite_count": "1",
+        "crossover_fraction": "0.70",
+        
+        "robot_radius": "0.15",
+        "alpha": "1.0",
+        
+        "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/Comparisons - article 2.wbt",
+        "matlab_file": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
+        "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
+        "end_point_x": "8.5",
+        "end_point_y": "5.6",
+        
+        "simulation_repeat": "25",
+        "average_time_in_each_simulation": "160",
+        "webots_initiation_time": "15",
+        "matlab_initiation_time": "20"
+},
+
+
+
+{
+    "metaheuristic": "PSO",
+        "population_size": "30",
+        "max_generations": "10",
+        "self_adjustment_weight": "1",
+        "social_adjustment_weight": "1.5",
+        
+        "robot_radius": "0.15",
+        "alpha": "1.4",
+        
+        "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/Comparisons - article 3.wbt",
+        "matlab_file": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
+        "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
+        "end_point_x": "7.5",
+        "end_point_y": "-7.5",
+        
+        "simulation_repeat": "65",
+        "average_time_in_each_simulation": "160",
+        "webots_initiation_time": "15",
+        "matlab_initiation_time": "20"
+},
+
+{
+    "metaheuristic": "GA",
+        "population_size": "30",
+        "max_generations": "10",
+        "elite_count": "1",
+        "crossover_fraction": "0.70",
+        
+        "robot_radius": "0.15",
+        "alpha": "1.4",
+        
+        "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/Comparisons - article 3.wbt",
+        "matlab_file": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
+        "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
+        "end_point_x": "7.5",
+        "end_point_y": "-7.5",
+        
+        "simulation_repeat": "65",
+        "average_time_in_each_simulation": "160",
+        "webots_initiation_time": "15",
+        "matlab_initiation_time": "20"
+}
+
+]

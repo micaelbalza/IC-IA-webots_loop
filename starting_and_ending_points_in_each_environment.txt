@@ -1,0 +1,43 @@
+AMB_01 - inicial point: {-8.0, -2.0}
+AMB_01 - final point:   {4.0, 4.0}
+Tempo_médio = 
+
+AMB_02 - inicial point: {-2.0, -2.0}
+AMB_02 - final point:   {2.0, -2.5}
+Tempo_médio = 
+
+AMB_03 - inicial point: {-4.0, 0.0}
+AMB_03 - final point:   {2.0, 0.0}
+Tempo_médio = 
+
+AMB_04 - inicial point: {-5.0, -5.0}
+AMB_04 - final point:   {4.0, 4.0}
+Tempo_médio = 
+
+AMB_05 - inicial point: {-8.0, -2.0}
+AMB_05 - final point:   {4.0, 4.0}
+Tempo_médio = 
+
+AMB_06 - inicial point: {-4.0, 0.0}
+AMB_06 - final point:   {2.0, 0.0}
+Tempo_médio = 
+
+Comparisons - article 1 - inicial point: {-9.5, -9.5}
+Comparisons - article 1 - final point:   {9.5, 9.5}
+Tempo_médio = 
+
+Comparisons - article 2 - inicial point: {-9.5, -6.5}
+Comparisons - article 2 - final point:   {8.5, 5.55}
+Tempo_médio = 
+
+
+Comparisons - article 3 - inicial point: {-7.5, 7.5}
+Comparisons - article 3 - final point:   {7.5, -7.5}
+
+
+
+
+--------------- errado/fail--------------
+Comparisons - article 3 - inicial point: {-1.0, 0.0}
+Comparisons - article 3 - final point:   {-2.5, -3.0}
+Tempo_médio = 

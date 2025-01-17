@@ -1,0 +1,35 @@
+Number of simulations terminated due to time limit: 10
+Simulations terminated due to time limit:
+02
+03
+05
+07
+08
+13
+22
+23
+27
+29
+
+Number of simulations terminated by MATLAB process termination: 20
+Simulations terminated by MATLAB process termination:
+01
+04
+06
+09
+10
+11
+12
+14
+15
+16
+17
+18
+19
+20
+21
+24
+25
+26
+28
+30

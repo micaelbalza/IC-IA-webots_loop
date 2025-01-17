@@ -1,0 +1,343 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/apartment_structure/protos/Wall.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/appearances/protos/Roughcast.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
+  position -5.508950776161859e-16 -1.1017901552323719e-15 39.6961738603599
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+  castShadows FALSE
+}
+RectangleArena {
+  floorSize 22 22
+  floorTileSize 2 2
+  wallHeight 0.3
+}
+DEF Supervisor Robot {
+  controller "supervisor_draw_the_path-article_comparation"
+  supervisor TRUE
+}
+Wall {
+  translation -1 5.5 0
+  name "wall(8)"
+  size 2 5 1
+  appearance Roughcast {
+    colorOverride 0.933333 0.933333 0.92549
+    textureTransform TextureTransform {
+      scale 2.4 1
+    }
+  }
+}
+Wall {
+  translation -6 -0.5 0
+  name "wall(4)"
+  size 2 5 1
+  appearance Roughcast {
+    colorOverride 0.933333 0.933333 0.92549
+    textureTransform TextureTransform {
+      scale 2.4 1
+    }
+  }
+}
+Wall {
+  translation -6 5 0
+  name "wall(10)"
+  size 4 2 1
+  appearance Roughcast {
+    colorOverride 0.933333 0.933333 0.92549
+    textureTransform TextureTransform {
+      scale 2.4 1
+    }
+  }
+}
+Wall {
+  translation -4 -6 0
+  name "wall(7)"
+  size 6 2 1
+  appearance Roughcast {
+    colorOverride 0.933333 0.933333 0.92549
+    textureTransform TextureTransform {
+      scale 2.4 1
+    }
+  }
+}
+Wall {
+  translation -2 -0.5 0
+  name "wall(5)"
+  size 2 5 1
+  appearance Roughcast {
+    colorOverride 0.933333 0.933333 0.92549
+    textureTransform TextureTransform {
+      scale 2.4 1
+    }
+  }
+}
+Wall {
+  translation 7 -3 0
+  name "wall(2)"
+  size 2 6 1
+  appearance Roughcast {
+    colorOverride 0.933333 0.933333 0.92549
+    textureTransform TextureTransform {
+      scale 2.4 1
+    }
+  }
+}
+Wall {
+  translation 7.5 6.5 0
+  name "wall(6)"
+  size 1 3 1
+}
+Wall {
+  translation 2.5 -3.5 0
+  name "wall(3)"
+  size 3 5 1
+}
+Wall {
+  translation 3.5 3.5 0
+  name "wall(9)"
+  size 5 3 1
+}
+Wall {
+  translation 2.5 0.5 0
+  name "wall(1)"
+  size 3 1 1
+}
+Solid {
+  translation 7.5 -7.5 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+      }
+      geometry Cylinder {
+        height 0.01
+        radius 0.15
+      }
+    }
+  ]
+}
+DEF MB-01 Robot {
+  translation -7.5 7.5 0.278343
+  rotation 0.005219000176840772 0.015003716413407213 0.9998738173044337 2.468549949743787
+  children [
+    DEF Body Pose {
+      translation 0 0 0.11
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0 0 1
+            roughness 1
+          }
+          geometry Cylinder {
+            height 0.2
+            radius 0.15
+          }
+        }
+      ]
+      translationStep 0
+      rotationStep 0
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position -3110.253919143994
+        anchor 0.15 0 0.05
+      }
+      device [
+        RotationalMotor {
+          name "motor1"
+        }
+      ]
+      endPoint Solid {
+        translation 0.14103535773023002 0.0003200358611568326 0.050061613669627664
+        rotation -0.666991132295077 -0.36234730325782366 -0.6510201696272657 3.816401731544032
+        children [
+          DEF wheel Shape {
+            appearance PBRAppearance {
+              baseColor 0.1 0.1 0.1
+              roughness 1
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.05
+            }
+          }
+        ]
+        boundingObject USE wheel
+        physics Physics {
+        }
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position 8857.073809761227
+        anchor -0.15 0 0.05
+      }
+      device [
+        RotationalMotor {
+          name "motor2"
+        }
+      ]
+      endPoint Solid {
+        translation -0.14108997401484236 0.00012416683210060456 0.050088614315893246
+        rotation 0.39340854109574414 -0.8263082667135414 0.40304387869533675 4.524284132003616
+        children [
+          USE wheel
+        ]
+        name "solid(1)"
+        boundingObject USE wheel
+        physics Physics {
+        }
+      }
+    }
+    DEF Front Solid {
+      translation 0 -0.13 0.21
+      children [
+        Shape {
+          appearance PBRAppearance {
+            roughness 1
+          }
+          geometry Box {
+            size 0.02 0.04 0.01
+          }
+        }
+      ]
+      name "front"
+    }
+    Solid {
+      translation 0.1 0.1 0.21
+      rotation 0 1 0 0
+      children [
+        DistanceSensor {
+          rotation 0 0 1 0.7854003061004253
+          name "distance sensor_E_2"
+          lookupTable [
+            0 0 0
+            3 3 0
+          ]
+          aperture 1
+          gaussianWidth 1.57
+        }
+        Shape {
+          geometry Cylinder {
+            height 0.01
+            radius 0.01
+          }
+        }
+      ]
+      name "Sensor_E_2"
+    }
+    Solid {
+      translation -0.1 0.1 0.21
+      children [
+        DistanceSensor {
+          rotation 0 0 1 2.3562
+          name "distance sensor_D_2"
+          lookupTable [
+            0 0 0
+            3 3 0
+          ]
+          aperture 1
+          gaussianWidth 1.5697
+        }
+        Shape {
+          geometry Cylinder {
+            height 0.01
+            radius 0.01
+          }
+        }
+      ]
+      name "Sensor_D_2"
+    }
+    Solid {
+      translation -0.1 -0.1 0.21
+      children [
+        DistanceSensor {
+          rotation 0 0 1 -2.355
+          name "distance sensor_D_1"
+          lookupTable [
+            0 0 0
+            3 3 0
+          ]
+          aperture 1
+          gaussianWidth 1.57
+        }
+        Shape {
+          geometry Cylinder {
+            height 0.01
+            radius 0.01
+          }
+        }
+      ]
+      name "Sensor_D_1"
+    }
+    Solid {
+      translation 0.1 -0.1 0.21
+      children [
+        DistanceSensor {
+          rotation 0 0 1 -0.7854
+          name "distance sensor_E_1"
+          lookupTable [
+            0 0 0
+            3 3 0
+          ]
+          aperture 1
+          gaussianWidth 1.57
+        }
+        Shape {
+          geometry Cylinder {
+            height 0.01
+            radius 0.01
+          }
+        }
+      ]
+      name "Sensor_E_1"
+    }
+    Solid {
+      translation 1.26827e-08 4.42916e-09 0.21
+      rotation 0 0 1 3.14
+      children [
+        Compass {
+          name "compass_sensor"
+        }
+        GPS {
+          name "gps_sensor"
+        }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.333333 0.341176 0.32549
+            roughness 1
+          }
+          geometry Cylinder {
+            height 0.02
+            radius 0.04
+          }
+        }
+      ]
+      name "GPS and Compass"
+      boundingObject Cylinder {
+        height 0.02
+        radius 0.04
+      }
+      recognitionColors [
+        0.333333 0.341176 0.32549
+      ]
+    }
+  ]
+  name "MB-01"
+  boundingObject USE Body
+  physics Physics {
+  }
+  controller "my_controller_Micael"
+  remoteControl ""
+}

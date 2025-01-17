@@ -1,0 +1,59 @@
+function [output2] = aJ(pGA_m, pDP_space, individual_number)
+    % Eq 18
+    in = inpolygon(pGA_m(individual_number, 1), pGA_m(individual_number, 2), pDP_space(:, 1), pDP_space(:, 2));
+
+    if in
+        % Define the points of the line
+        point1 = pGA_m(individual_number, :);
+        point2 = pGA_m(individual_number, :); % Assuming both points are the same
+
+        % Check if the line between the points is completely contained within the polygon
+        line = [point1; point2];
+        for i = 1:size(pDP_space, 1)
+            if i == size(pDP_space, 1)
+                next_index = 1; % Wrap around to the first vertex after reaching the last one
+            else
+                next_index = i + 1;
+            end
+
+            if ~inpolygon(line(:,1), line(:,2), pDP_space(i:next_index, 1), pDP_space(i:next_index, 2))
+                output2 = Inf;
+                return;
+            end
+        end
+
+        % If it reaches here, the line is completely contained within the polygon
+        output2 = 0;
+    else
+        output2 = Inf; % Point 1 is outside the polygon
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%aJ - original
+%function [output2] = aJ(pGA_m,pDP,individual_number) % Eq 18
+   %{ 
+
+    in = inpolygon(pGA_m(individual_number, 1), pGA_m(individual_number, 2), pDP(:, 1), pDP(:, 2));
+    
+    
+    if in == true
+        output2 = 0; %  antes tava 0, mas na dissertaççaod de Atila tá 1
+    else
+        output2 = Inf;
+    end 
+
+end 
+   %}

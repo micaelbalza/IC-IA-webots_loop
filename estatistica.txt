@@ -1,0 +1,16 @@
+Somatório do tempo de CPU gasto:
+  Média: None
+  Desvio Padrão: None
+  Moda: None
+Número de deslocamentos:
+  Média: None
+  Desvio Padrão: None
+  Moda: None
+Distância percorrida:
+  Média: None
+  Desvio Padrão: None
+  Moda: None
+Somatório do tempo de relógio gasto:
+  Média: None
+  Desvio Padrão: None
+  Moda: None

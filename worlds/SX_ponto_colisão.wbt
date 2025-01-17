@@ -1,0 +1,334 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/factory/containers/protos/WoodenBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/apartment_structure/protos/Wall.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.5851989387698167 0.5847401053464882 0.5618017544134747 2.1171825389955004
+  position 2.2492695444308506 1.4175468773207742 11.39050678386359
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 18 18
+  floorTileSize 4 4
+  wallHeight 0.3
+}
+WoodenBox {
+  size 2 2 1
+}
+WoodenBox {
+  translation -4.5 4 0.3
+  name "wooden box(1)"
+  size 1 2 1
+}
+WoodenBox {
+  translation -3.5 0.5 0.3
+  name "wooden box(2)"
+  size 3 1 1
+}
+Wall {
+  translation -8.9 -3.38 0
+  size 0.2 4.5 1
+}
+Wall {
+  translation -4.09 -6.18 0
+  name "wall(2)"
+  size 1 3.5 1
+}
+Wall {
+  translation 6.77 0.26 0
+  name "wall(3)"
+  size 3.6 0.2 1
+}
+Wall {
+  translation -6.89 1.92 0
+  name "wall(5)"
+  size 3.6 0.2 1
+}
+Solid {
+  translation 4 4 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+      }
+      geometry Cylinder {
+        height 0.01
+        radius 0.1
+      }
+    }
+  ]
+}
+Wall {
+  translation -8.01 -1.25 0
+  name "wall(4)"
+  size 1.5 0.2 1
+}
+Wall {
+  translation -7.14 -3.38 0
+  name "wall(1)"
+  size 0.2 4.5 1
+}
+WoodenBox {
+  translation 0.5 -3.5 0.3
+  name "wooden box(3)"
+  size 1 1 1
+}
+WoodenBox {
+  translation 4 2 0.3
+  name "wooden box(7)"
+  size 2 1 1
+}
+WoodenBox {
+  translation 3.5 -2 0.3
+  name "wooden box(8)"
+  size 1 2 1
+}
+WoodenBox {
+  translation -2.5 -2.5 0.3
+  name "wooden box(4)"
+  size 1 1 1
+}
+WoodenBox {
+  translation 1.92 3.11 0.3
+  name "wooden box(9)"
+  size 1 1 1
+}
+WoodenBox {
+  translation -1 3.5 0.3
+  name "wooden box(5)"
+  size 4 1 1
+}
+WoodenBox {
+  translation 2.5 -4.5 0.3
+  name "wooden box(6)"
+  size 1 1 1
+}
+Robot {
+  translation 0.8425478034325594 1.4888598569673608 -0.0057777662584731215
+  rotation -0.005213646852541477 -0.014830077767396248 0.9998764357058877 2.468491380527836
+  children [
+    DEF Body Pose {
+      translation 0 0 0.11
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0 0 1
+            roughness 1
+          }
+          geometry Cylinder {
+            height 0.2
+            radius 0.15
+          }
+        }
+      ]
+      translationStep 0
+      rotationStep 0
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position -3110.253918060772
+        anchor 0.15 0 0.05
+      }
+      device [
+        RotationalMotor {
+          name "motor1"
+        }
+      ]
+      endPoint Solid {
+        translation 0.14103535773023002 0.00032003579441534143 0.050061614016297606
+        rotation -0.6669912377725886 -0.36234690473654974 -0.6510202833725168 3.8164010090443155
+        children [
+          DEF wheel Shape {
+            appearance PBRAppearance {
+              baseColor 0.1 0.1 0.1
+              roughness 1
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.05
+            }
+          }
+        ]
+        boundingObject USE wheel
+        physics Physics {
+        }
+        linearVelocity 3.872342851237088e-07 4.744042536271424e-07 -1.8629906594829168e-07
+        angularVelocity -1.0139717320575211e-05 8.342294810052625e-06 4.1433117606622734e-08
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position 8857.07380871158
+        anchor -0.15 0 0.05
+      }
+      device [
+        RotationalMotor {
+          name "motor2"
+        }
+      ]
+      endPoint Solid {
+        translation -0.14108997401484236 0.00012416692511419986 0.05008861418556198
+        rotation 0.3934089082161239 -0.8263079139915878 0.4030442434907964 4.524283719063716
+        children [
+          USE wheel
+        ]
+        name "solid(1)"
+        boundingObject USE wheel
+        physics Physics {
+        }
+        linearVelocity 3.764111418910916e-07 4.639701069064607e-07 -2.443218566710358e-07
+        angularVelocity -1.0033977896604772e-05 8.258292554795767e-06 4.441111383854729e-08
+      }
+    }
+    DEF Front Solid {
+      translation 0 -0.13 0.21
+      children [
+        Shape {
+          appearance PBRAppearance {
+            roughness 1
+          }
+          geometry Box {
+            size 0.02 0.04 0.01
+          }
+        }
+      ]
+      name "front"
+    }
+    Solid {
+      translation 0.1 0.1 0.21
+      rotation 0 1 0 0
+      children [
+        DistanceSensor {
+          rotation 0 0 1 0.7854003061004253
+          name "distance sensor_E_2"
+          lookupTable [
+            0 0 0
+            3 3 0
+          ]
+          aperture 1
+          gaussianWidth 1.57
+        }
+        Shape {
+          geometry Cylinder {
+            height 0.01
+            radius 0.01
+          }
+        }
+      ]
+      name "Sensor_E_2"
+    }
+    Solid {
+      translation -0.1 0.1 0.21
+      children [
+        DistanceSensor {
+          rotation 0 0 1 2.3562
+          name "distance sensor_D_2"
+          lookupTable [
+            0 0 0
+            3 3 0
+          ]
+          aperture 1
+          gaussianWidth 1.5697
+        }
+        Shape {
+          geometry Cylinder {
+            height 0.01
+            radius 0.01
+          }
+        }
+      ]
+      name "Sensor_D_2"
+    }
+    Solid {
+      translation -0.1 -0.1 0.21
+      children [
+        DistanceSensor {
+          rotation 0 0 1 -2.355
+          name "distance sensor_D_1"
+          lookupTable [
+            0 0 0
+            3 3 0
+          ]
+          aperture 1
+          gaussianWidth 1.57
+        }
+        Shape {
+          geometry Cylinder {
+            height 0.01
+            radius 0.01
+          }
+        }
+      ]
+      name "Sensor_D_1"
+    }
+    Solid {
+      translation 0.1 -0.1 0.21
+      children [
+        DistanceSensor {
+          rotation 0 0 1 -0.7854
+          name "distance sensor_E_1"
+          lookupTable [
+            0 0 0
+            3 3 0
+          ]
+          aperture 1
+          gaussianWidth 1.57
+        }
+        Shape {
+          geometry Cylinder {
+            height 0.01
+            radius 0.01
+          }
+        }
+      ]
+      name "Sensor_E_1"
+    }
+    Solid {
+      translation 1.26827e-08 4.42916e-09 0.21
+      rotation 0 0 1 3.14
+      children [
+        Compass {
+          name "compass_sensor"
+        }
+        GPS {
+          name "gps_sensor"
+        }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.333333 0.341176 0.32549
+            roughness 1
+          }
+          geometry Cylinder {
+            height 0.02
+            radius 0.04
+          }
+        }
+      ]
+      name "GPS and Compass"
+      boundingObject Cylinder {
+        height 0.02
+        radius 0.04
+      }
+      recognitionColors [
+        0.333333 0.341176 0.32549
+      ]
+    }
+  ]
+  name "MB-01"
+  boundingObject USE Body
+  physics Physics {
+  }
+  controller "my_controller_Micael"
+  linearVelocity 9.8513148030678e-07 1.1860648362276394e-06 -2.0830444886137437e-07
+  angularVelocity -9.971636454755531e-06 8.207602769576341e-06 4.277399570429331e-08
+}
