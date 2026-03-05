@@ -1,4 +1,56 @@
-[   
+
+[
+    {
+        "robot_radius": "0.15",
+        "alpha": "1.4",
+        "matlab_file": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
+        "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
+        "simulation_repeat": "60",
+        "average_time_in_each_simulation": "160",
+        "webots_initiation_time": "15",
+        "matlab_initiation_time": "20",
+        "metaheuristic": "WOA",
+        "population_size": "30",
+        "max_generations": "10",
+        "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/AMB_06.wbt",
+        "end_point_x": "2.0",
+        "end_point_y": "0.0",
+        "spiral_coefficient": "1.4"
+    },
+    {
+        "robot_radius": "0.15",
+        "alpha": "1.4",
+        "matlab_file": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
+        "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
+        "simulation_repeat": "6",
+        "average_time_in_each_simulation": "160",
+        "webots_initiation_time": "15",
+        "matlab_initiation_time": "20",
+        "metaheuristic": "WOA",
+        "population_size": "20",
+        "max_generations": "30",
+        "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/AMB_04.wbt",
+        "end_point_x": "4.0",
+        "end_point_y": "4.0",
+        "spiral_coefficient": "0.9"
+    },
+    {
+        "robot_radius": "0.15",
+        "alpha": "1.4",
+        "matlab_file": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
+        "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
+        "simulation_repeat": "4",
+        "average_time_in_each_simulation": "160",
+        "webots_initiation_time": "15",
+        "matlab_initiation_time": "20",
+        "metaheuristic": "WOA",
+        "population_size": "20",
+        "max_generations": "30",
+        "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/AMB_04.wbt",
+        "end_point_x": "4.0",
+        "end_point_y": "4.0",
+        "spiral_coefficient": "1.4"
+    },
     {
         "metaheuristic": "GA",
             "population_size": "20",

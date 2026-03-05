@@ -7,8 +7,8 @@ supervisor = Supervisor()
 timestep = int(supervisor.getBasicTimeStep())
 
 # Time to add the box in seconds
-time_to_add_box1 = 45 # 25
-time_to_add_box2 = 200 #180
+time_to_add_box1 = 175 # 25  45 60
+time_to_add_box2 = 325 #180  200
 
 # Initialize a flag to indicate if the box has been added
 box_added1 = False

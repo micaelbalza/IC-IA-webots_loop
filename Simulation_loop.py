@@ -2,11 +2,90 @@ import subprocess
 import os
 import time
 import json
+import signal
+from typing import Optional
 
-# O problema que vc precisa resolver agora é a chamada certa do matlab, passando as variaveis pela chamada tbm. oque no momento nao está ocorrendo. precisa ajustar as funcloes no matlab GA_controlProgram e PSO_comtrol_program  e nesse arquivo colocar para enviar as variaveis via chamada.
+
+# =============================================================================
+# 1) UTILITÁRIOS ROBUSTOS PARA INICIAR E ENCERRAR PROCESSOS (LINUX)
+#
+# Objetivo:
+# - Evitar que Webots/Matlab deixem processos filhos órfãos quando ocorre erro.
+# - Garantir que ao final de cada simulação (sucesso, erro ou timeout) tudo seja
+#   encerrado e o sistema fique "limpo" para a próxima repetição.
+#
+# Estratégia:
+# - Iniciar cada processo em uma NOVA SESSÃO (process group) via start_new_session=True
+# - Encerrar o GRUPO inteiro (processo + filhos) com SIGTERM e, se necessário, SIGKILL
+# =============================================================================
+def start_process(cmd, env=None, cwd=None):
+    """
+    Inicia o processo em uma nova sessão (process group).
+
+    - start_new_session=True cria um novo grupo de processos.
+    - Isso permite matar o processo e TODOS os filhos com os.killpg(pid, sinal).
+    - stdout/stderr são descartados para evitar travamentos por buffers.
+      (Se quiser depurar, redirecione para arquivo).
+    """
+    return subprocess.Popen(
+        cmd,
+        env=env,
+        cwd=cwd,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True  # <- ESSENCIAL (Linux)
+    )
 
 
-def criar_pasta_principal(nome_pasta_principal):
+def terminate_process_tree(p: Optional[subprocess.Popen], timeout_s: float = 20.0):
+    """
+    Encerra um processo e TODOS os processos filhos do mesmo grupo (process group).
+
+    Fluxo:
+      1) SIGTERM no grupo  -> pede encerramento gracioso
+      2) espera timeout_s  -> dá tempo do app fechar corretamente
+      3) SIGKILL no grupo  -> força encerramento se ainda estiver vivo
+    """
+    if p is None:
+        return
+
+    # Se já terminou, não faz nada
+    if p.poll() is not None:
+        return
+
+    # 1) Encerramento gracioso
+    try:
+        os.killpg(p.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        return
+    except Exception:
+        pass
+
+    # 2) Aguarda encerrar
+    t0 = time.time()
+    while time.time() - t0 < timeout_s:
+        if p.poll() is not None:
+            return
+        time.sleep(0.2)
+
+    # 3) Força encerramento
+    try:
+        os.killpg(p.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    except Exception:
+        pass
+
+
+# =============================================================================
+# 2) UTILITÁRIOS DE ARQUIVOS/PASTAS (MANTIDOS)
+# =============================================================================
+def criar_pasta_principal(nome_pasta_principal, path_to_save_simulation_files):
+    """
+    Cria a pasta principal que agrupa um tipo de simulação, por exemplo:
+        Env1-DE-P20-G30-F0.6-CR0.9/
+    Retorna False se já existir, para evitar sobrescrever.
+    """
     caminho_pasta_principal = os.path.join(path_to_save_simulation_files, nome_pasta_principal)
     try:
         os.makedirs(caminho_pasta_principal)
@@ -15,7 +94,12 @@ def criar_pasta_principal(nome_pasta_principal):
         print("\n Nothing will be done! \n")
         return False
 
+
 def clean_folder(caminho_pasta):
+    """
+    Remove arquivos soltos dentro da pasta (não remove subpastas).
+    Útil para evitar que a simulação atual use arquivos antigos.
+    """
     for arquivo in os.listdir(caminho_pasta):
         arquivo_path = os.path.join(caminho_pasta, arquivo)
         try:
@@ -25,24 +109,46 @@ def clean_folder(caminho_pasta):
             print(f"Erro ao excluir {arquivo_path}: {e}")
 
 
-
-
+# =============================================================================
+# 3) MAIN
+#
+# Fluxo geral:
+#   - Lê simulationSetup.json
+#   - Para cada setup:
+#       - Monta simulation_name e parâmetros do Matlab
+#       - Cria pasta principal
+#       - Repete 'simulation_repeat' vezes:
+#           - Cria pasta da repetição (request/response)
+#           - Inicia Webots
+#           - Inicia Matlab (-batch)
+#           - Aguarda terminar por:
+#               (a) Matlab encerrar (sucesso/erro)  -> PARA AQUI (break)
+#               (b) Timeout                          -> PARA AQUI (break)
+#           - SEMPRE: encerra processos (Matlab/Webots + filhos)
+#           - SEMPRE: espera sleep(130) antes da próxima simulação
+#       - Escreve log.txt ao final do setup
+# =============================================================================
 if __name__ == "__main__":
-    
-    # Open the Json file
+
+    # -------------------------------------------------------------------------
+    # Leitura do arquivo JSON com todos os setups
+    # -------------------------------------------------------------------------
     with open('simulationSetup.json', 'r') as arquivo:
         simulation_setup = json.load(arquivo)
-    
 
-    for index, actual_setup in enumerate(simulation_setup, start=1): # Type of simulations  
-        # reading the parameters of the current simulation
+    # -------------------------------------------------------------------------
+    # Loop por setup (tipo de simulação)
+    # -------------------------------------------------------------------------
+    for index, actual_setup in enumerate(simulation_setup, start=1):
+
+        # --------------------- parâmetros gerais -----------------------------
         metaheuristic = actual_setup["metaheuristic"]
-        
+
         robot_radius = float(actual_setup["robot_radius"])
         alpha = float(actual_setup["alpha"])
-        
-        environment_file = actual_setup["environment"] # file that describes the environment
-        path_to_save_simulation_files = actual_setup["path_to_save_simulation_files"] 
+
+        environment_file = actual_setup["environment"]
+        path_to_save_simulation_files = actual_setup["path_to_save_simulation_files"]
 
         simulation_repeat = int(actual_setup["simulation_repeat"])
         simulation_time = float(actual_setup["average_time_in_each_simulation"])
@@ -51,16 +157,32 @@ if __name__ == "__main__":
         end_point_x = float(actual_setup["end_point_x"])
         end_point_y = float(actual_setup["end_point_y"])
 
+        # ------------------------- montar nome e parâmetros -------------------
+        Matlab_file = None
+        matlab_parameters_str = None
+        simulation_name = None
+
         if metaheuristic == 'PSO':
             population_size = int(actual_setup["population_size"])
             max_generations = int(actual_setup["max_generations"])
             self_adjustment_weight = float(actual_setup["self_adjustment_weight"])
             social_adjustment_weight = float(actual_setup["social_adjustment_weight"])
             Matlab_file = actual_setup["matlab_file"]
-            matlab_parameters = [population_size, max_generations, self_adjustment_weight, social_adjustment_weight, robot_radius, alpha]
-            matlab_parameters_str = "','".join(map(str, matlab_parameters)) 
-            #matlab_metaheuristic_function = "PSO_ControlProgram"
-            simulation_name = os.path.splitext(os.path.basename(environment_file))[0] + "-" + metaheuristic + "-P"+ str(population_size) + "-G" + str(max_generations) + "-C" + str(self_adjustment_weight) + "-S" + str(social_adjustment_weight) + "/"
+
+            matlab_parameters = [
+                population_size, max_generations,
+                self_adjustment_weight, social_adjustment_weight,
+                robot_radius, alpha
+            ]
+            matlab_parameters_str = "','".join(map(str, matlab_parameters))
+
+            simulation_name = (
+                os.path.splitext(os.path.basename(environment_file))[0] + "-" +
+                metaheuristic + "-P" + str(population_size) +
+                "-G" + str(max_generations) +
+                "-C" + str(self_adjustment_weight) +
+                "-S" + str(social_adjustment_weight) + "/"
+            )
 
         elif metaheuristic == "GA":
             population_size = int(actual_setup["population_size"])
@@ -68,120 +190,268 @@ if __name__ == "__main__":
             elite_count = int(actual_setup["elite_count"])
             crossover_fraction = float(actual_setup["crossover_fraction"])
             Matlab_file = actual_setup["matlab_file"]
-            matlab_parameters = [population_size, max_generations, elite_count, crossover_fraction, robot_radius, alpha]
+
+            matlab_parameters = [
+                population_size, max_generations,
+                elite_count, crossover_fraction,
+                robot_radius, alpha
+            ]
             matlab_parameters_str = "','".join(map(str, matlab_parameters))
-            #matlab_metaheuristic_function = "GA_ControlProgram"
-            simulation_name = os.path.splitext(os.path.basename(environment_file))[0] + "-" + metaheuristic + "-P"+ str(population_size) + "-G" + str(max_generations) + "-E" + str(elite_count) + "-C" + str(crossover_fraction) + "/"
+
+            simulation_name = (
+                os.path.splitext(os.path.basename(environment_file))[0] + "-" +
+                metaheuristic + "-P" + str(population_size) +
+                "-G" + str(max_generations) +
+                "-E" + str(elite_count) +
+                "-C" + str(crossover_fraction) + "/"
+            )
+
+        elif metaheuristic == "WOA":
+            population_size = int(actual_setup["population_size"])
+            max_generations = int(actual_setup["max_generations"])
+            spiral_coefficient = float(actual_setup["spiral_coefficient"])
+            Matlab_file = actual_setup["matlab_file"]
+
+            matlab_parameters = [population_size, max_generations, spiral_coefficient]
+            matlab_parameters_str = "','".join(map(str, matlab_parameters))
+
+            simulation_name = (
+                os.path.splitext(os.path.basename(environment_file))[0] + "-" +
+                metaheuristic + "-P" + str(population_size) +
+                "-G" + str(max_generations) +
+                "-SC" + str(spiral_coefficient) + "/"
+            )
+
+        elif metaheuristic == "BA":
+            nScoutBees = int(actual_setup["nScoutBees"])
+            max_generations = int(actual_setup["max_generations"])
+            neighborhood_radius = float(actual_setup["neighborhood_radius"])
+            nEliteSites = int(actual_setup["nEliteSites"])
+            nSelectedSites = int(actual_setup["nSelectedSites"])
+            nEliteBeesPerSite = int(actual_setup["nEliteBeesPerSite"])
+            nBeesPerSite = int(actual_setup["nBeesPerSite"])
+            Matlab_file = actual_setup["matlab_file"]
+
+            matlab_parameters = [
+                nScoutBees, max_generations,
+                nEliteSites, nSelectedSites,
+                nEliteBeesPerSite, nBeesPerSite,
+                neighborhood_radius
+            ]
+            matlab_parameters_str = "','".join(map(str, matlab_parameters))
+
+            simulation_name = (
+                os.path.splitext(os.path.basename(environment_file))[0] + "-" +
+                metaheuristic + "-P" + str(nScoutBees) +
+                "-G" + str(max_generations) +
+                "-NR" + str(neighborhood_radius) + "/"
+            )
+
+        elif metaheuristic == "DE":
+            population_size = int(actual_setup["population_size"])
+            max_generations = int(actual_setup["max_generations"])
+            F = float(actual_setup["F"])
+            CR = float(actual_setup["CR"])
+            Matlab_file = actual_setup["matlab_file"]
+
+            matlab_parameters = [population_size, max_generations, F, CR]
+            matlab_parameters_str = "','".join(map(str, matlab_parameters))
+
+            simulation_name = (
+                os.path.splitext(os.path.basename(environment_file))[0] + "-" +
+                metaheuristic + "-P" + str(population_size) +
+                "-G" + str(max_generations) +
+                "-F" + str(F) +
+                "-CR" + str(CR) + "/"
+            )
+
         else:
             print("Error - Reading not implemented - metaheuristic fail")
+            continue
 
-        erro = criar_pasta_principal(simulation_name)
+        # ------------------------- cria pasta principal -----------------------
+        erro = criar_pasta_principal(simulation_name, path_to_save_simulation_files)
+        if erro is False:
+            continue
 
-        if erro != False:
-            
-            time_limit_count = 0
-            process_termination_count = 0
-            simulations_time_limit = []
-            simulations_process_termination = []
+        # ------------------------- contadores para log ------------------------
+        time_limit_count = 0
+        process_termination_count = 0
+        simulations_time_limit = []
+        simulations_process_termination = []
+        simulations_matlab_success = []
+        simulations_matlab_error = []
 
-            for current_simulation_number in range(1, simulation_repeat + 1): # repetition of simulations
-                
-                current_simulation_number_str = str(current_simulation_number).zfill(2)  # Completing with '0' on the left. '1' --> '01'
+        # ---------------------------------------------------------------------
+        # Loop de repetições
+        # ---------------------------------------------------------------------
+        for current_simulation_number in range(1, simulation_repeat + 1):
 
-                destination_folder = path_to_save_simulation_files + simulation_name + current_simulation_number_str + "/"
+            current_simulation_number_str = str(current_simulation_number).zfill(2)
 
-                os.makedirs(destination_folder, exist_ok=True)
+            destination_folder = (
+                path_to_save_simulation_files +
+                simulation_name +
+                current_simulation_number_str + "/"
+            )
 
-                clean_folder(destination_folder)
+            # Preparar pastas desta repetição
+            os.makedirs(destination_folder, exist_ok=True)
+            clean_folder(destination_folder)
 
-                os.makedirs(destination_folder + "request/", exist_ok=True) # create request folder
-                os.makedirs(destination_folder + "response/", exist_ok=True) # create response folder
+            os.makedirs(destination_folder + "request/", exist_ok=True)
+            os.makedirs(destination_folder + "response/", exist_ok=True)
 
+            processo_webots = None
+            processo_matlab = None
 
-                # Init Webots
-                os.environ["DESTINATION_FOLDER"] = destination_folder
-                end_point_str = f"{end_point_x},{end_point_y}"
-                os.environ["END_POINT"] = end_point_str
+            # flags de término (para log e debug)
+            ended_by_timeout = False
+            matlab_returncode = None
+
+            try:
+                # =============================================================
+                # A) Inicia Webots
+                # =============================================================
+                env = os.environ.copy()
+                env["DESTINATION_FOLDER"] = destination_folder
+                env["END_POINT"] = f"{end_point_x},{end_point_y}"
+
                 time.sleep(1)
-                webots_command = ["webots", "--no-rendering", "--batch", "--minimize", "--mode=fast" , environment_file] #, 
-                processo_webots = subprocess.Popen(webots_command)
-                time.sleep(Webots_initiation_time) # waiting webots start up
-                print("Webots has been started.")
-                
-                # Iniciar o Matlab
-                work_path = path_to_save_simulation_files + simulation_name + current_simulation_number_str + "/"
-                if metaheuristic == 'PSO':
-                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch", f"PSO_ControlProgram('{work_path}','{matlab_parameters_str}')"]
-                elif metaheuristic == "GA":
-                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch", f"GA_ControlProgram('{work_path}','{matlab_parameters_str}')"]
 
-                processo_matlab = subprocess.Popen(matlab_command)
+                webots_command = ["xvfb-run", "-a", "webots", "--batch", "--no-rendering" ,  "--minimize", "--mode=fast" , environment_file] #, , , "--no-rendering" ,  "--minimize"
+                processo_webots = start_process(webots_command, env=env)
+
+                time.sleep(Webots_initiation_time)
+                print("Webots has been started.")
+
+                # =============================================================
+                # B) Inicia Matlab
+                # =============================================================
+                work_path = destination_folder
+
+                if metaheuristic == 'PSO':
+                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch",
+                                      f"PSO_ControlProgram('{work_path}','{matlab_parameters_str}')"]
+                elif metaheuristic == "GA":
+                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch",
+                                      f"GA_ControlProgram('{work_path}','{matlab_parameters_str}')"]
+                elif metaheuristic == "WOA":
+                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch",
+                                      f"WOA_ControlProgram('{work_path}','{matlab_parameters_str}')"]
+                elif metaheuristic == "BA":
+                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch",
+                                      f"Bees_ControlProgram('{work_path}','{matlab_parameters_str}')"]
+                elif metaheuristic == "DE":
+                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch",
+                                      f"DE_ControlProgram('{work_path}','{matlab_parameters_str}')"]
+                else:
+                    raise RuntimeError("Metaheuristic not implemented for matlab_command.")
+
+                processo_matlab = start_process(matlab_command)
+
                 print("work_path")
                 print(work_path)
+                
+                time.sleep(60) # 5
 
-                time.sleep(Matlab_initiation_time)  # waiting matlab start up
+                time.sleep(Matlab_initiation_time)
                 print("Matlab has been started.")
 
-                time_collected_from_the_start_of_the_simulation = time.time() # Collect intial time
+                # =============================================================
+                # C) Aguarda finalizar por MATLAB ENCERRAR ou TIMEOUT
+                #
+                # Correção importante:
+                # - Se o Matlab terminar, nós SAÍMOS do loop (break) imediatamente.
+                # - Isso evita que "dê timeout" mesmo quando a simulação concluiu.
+                # =============================================================
+                t0 = time.time()
 
-                time_passed = False 
-                matlab_ended = False
-
-                while not matlab_ended and not time_passed:  # checks if time has passed, or if the matlab process has ended (which means that the robot has reached the objective point)
-                    actual_time = time.time()
-                    if processo_matlab.poll() is not None:
-                        matlab_ended = True
+                while True:
+                    # 1) Checar se Matlab terminou
+                    matlab_returncode = processo_matlab.poll()
+                    if matlab_returncode is not None:
                         process_termination_count += 1
                         simulations_process_termination.append(current_simulation_number_str)
 
-                    if actual_time - time_collected_from_the_start_of_the_simulation > simulation_time:
-                        time_passed = True
-                        time_limit_count += 1 # Log count
-                        simulations_time_limit.append(current_simulation_number_str) # saving simulation name --> time_limit
-                        print("Timeout has been reached")
+                        if matlab_returncode == 0:
+                            simulations_matlab_success.append(current_simulation_number_str)
+                            print("Matlab terminou com sucesso (returncode=0).")
+                        else:
+                            simulations_matlab_error.append(current_simulation_number_str)
+                            print(f"Matlab terminou com erro (returncode={matlab_returncode}).")
+                        break
 
-                
-                # The simulation time has ended or the robot has reached the objective point        
-                subprocess.Popen(["pkill", "matlab"])
-                subprocess.Popen(["pkill", "webots"])
-                subprocess.run(['pkill', '-f', '/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/my_controller_Micael'])
-                print(" \n The simulation " +  simulation_name  + current_simulation_number_str + " finished \n " )
-                time.sleep(130) # Waiting to reestablish connection 
-        
-        # Recording count information in a log file
+                    # 2) Checar timeout
+                    if time.time() - t0 > simulation_time:
+                        ended_by_timeout = True
+                        time_limit_count += 1
+                        simulations_time_limit.append(current_simulation_number_str)
+                        print("Timeout has been reached")
+                        break
+
+                    time.sleep(0.2)
+                time.sleep(60) # 5
+
+            finally:
+                # =============================================================
+                # D) Encerramento garantido (SEMPRE)
+                # - Mesmo se Matlab terminou sozinho (sucesso/erro),
+                #   ainda garantimos que Webots e filhos sejam encerrados.
+                # - Se deu timeout, este bloco é o responsável por matar tudo.
+                # =============================================================
+                terminate_process_tree(processo_matlab, timeout_s=25)
+                terminate_process_tree(processo_webots, timeout_s=25)
+
+                # Fallback para controller específico (caso raro fique órfão)
+                subprocess.run(
+                    ['pkill', '-f',
+                     '/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/my_controller_Micael'],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+
+                # Mensagem final desta repetição
+                if ended_by_timeout:
+                    print(f"\n The simulation {simulation_name}{current_simulation_number_str} finished (TIMEOUT)\n")
+                else:
+                    # terminou pelo Matlab encerrar
+                    print(f"\n The simulation {simulation_name}{current_simulation_number_str} finished (MATLAB_END rc={matlab_returncode})\n")
+
+                # Mantido conforme solicitado
+                time.sleep(130)
+
+        # ---------------------------------------------------------------------
+        # Escrita do log ao final deste setup
+        # ---------------------------------------------------------------------
         log_filename = os.path.join(path_to_save_simulation_files, simulation_name, "log.txt")
         with open(log_filename, "w") as log_file:
-            log_file.write("Number of simulations terminated due to time limit: {}\n".format(time_limit_count))
-            log_file.write("Simulations terminated due to time limit:\n")
+            log_file.write("=== SUMMARY ===\n\n")
+
+            log_file.write("Number of simulations terminated due to time limit (TIMEOUT): {}\n".format(time_limit_count))
+            log_file.write("Simulations terminated due to time limit (TIMEOUT):\n")
             for sim in simulations_time_limit:
                 log_file.write(sim + "\n")
-            
+
             log_file.write("\n")
-            
-            log_file.write("Number of simulations terminated by MATLAB process termination: {}\n".format(process_termination_count))
-            log_file.write("Simulations terminated by MATLAB process termination:\n")
+
+            log_file.write("Number of simulations where MATLAB process ended: {}\n".format(process_termination_count))
+            log_file.write("Simulations where MATLAB process ended:\n")
             for sim in simulations_process_termination:
                 log_file.write(sim + "\n")
+
+            log_file.write("\n")
+
+            log_file.write("MATLAB ended with SUCCESS (returncode=0): {}\n".format(len(simulations_matlab_success)))
+            log_file.write("Simulations with MATLAB success:\n")
+            for sim in simulations_matlab_success:
+                log_file.write(sim + "\n")
+
+            log_file.write("\n")
+
+            log_file.write("MATLAB ended with ERROR (returncode!=0): {}\n".format(len(simulations_matlab_error)))
+            log_file.write("Simulations with MATLAB error:\n")
+            for sim in simulations_matlab_error:
+                log_file.write(sim + "\n")
+
     print("All simulations are over - the program has ended")
-    
-
-        
-
-
-
-            
-
-
-   
-
-
-
-
-
-
-
-
-
-
-
-

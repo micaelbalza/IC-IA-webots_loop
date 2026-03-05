@@ -1,4 +1,4 @@
-#VRML_SIM R2023b utf8
+#VRML_SIM R2025a utf8
 
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/floors/protos/RectangleArena.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackground.proto"
@@ -9,7 +9,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
-  position 6.559040665390405e-06 6.559059201859067e-06 32.016517102837305
+  position 2.5570526252835113e-05 2.5570598549363482e-05 38.739985694377665
 }
 TexturedBackground {
 }
@@ -17,7 +17,7 @@ TexturedBackgroundLight {
 }
 RectangleArena {
   floorSize 18 18
-  floorTileSize 4 4
+  floorTileSize 2 2
   wallHeight 0.3
 }
 WoodenBox {
@@ -114,8 +114,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0.14103535773023002 0.0003200358611568298 0.050061613669627664
-        rotation -0.666991132295077 -0.36234730325782366 -0.6510201696272657 3.816401731544032
+        translation 0.14103535773023002 0.0003200358611568299 0.050061613669627664
+        rotation -0.666991132295077 -0.3623473032578236 -0.6510201696272656 3.816401731544032
         children [
           DEF wheel Shape {
             appearance PBRAppearance {
