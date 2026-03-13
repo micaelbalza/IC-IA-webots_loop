@@ -4,7 +4,7 @@
         "alpha": "1.4",
         "matlab_file": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
         "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
-        "simulation_repeat": "4",
+        "simulation_repeat": "1",
         "average_time_in_each_simulation": "170",
         "webots_initiation_time": "20",
         "matlab_initiation_time": "20",
@@ -17,7 +17,3 @@
         "spiral_coefficient": "0.9"
     }
 ]
-
-
-
-
