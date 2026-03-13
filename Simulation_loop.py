@@ -330,25 +330,75 @@ if __name__ == "__main__":
                 # =============================================================
                 work_path = destination_folder
 
-                if metaheuristic == 'PSO':
-                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch",
-                                      f"PSO_ControlProgram('{work_path}','{matlab_parameters_str}')"]
-                elif metaheuristic == "GA":
-                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch",
-                                      f"GA_ControlProgram('{work_path}','{matlab_parameters_str}')"]
-                elif metaheuristic == "WOA":
-                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch",
-                                      f"WOA_ControlProgram('{work_path}','{matlab_parameters_str}')"]
-                elif metaheuristic == "BA":
-                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch",
-                                      f"Bees_ControlProgram('{work_path}','{matlab_parameters_str}')"]
-                elif metaheuristic == "DE":
-                    matlab_command = ["matlab", "-sd", Matlab_file, "-batch",
-                                      f"DE_ControlProgram('{work_path}','{matlab_parameters_str}')"]
-                else:
-                    raise RuntimeError("Metaheuristic not implemented for matlab_command.")
+                python_control_program = os.path.join(
+                    os.path.dirname(__file__),
+                    "controllers",
+                    "my_controller_Micael",
+                    "python_runtime",
+                    "control_program.py",
+                )
 
-                processo_matlab = start_process(matlab_command)
+                if metaheuristic == 'PSO':
+                    control_command = [
+                        "python3",
+                        python_control_program,
+                        metaheuristic,
+                        work_path,
+                        str(population_size),
+                        str(max_generations),
+                        str(self_adjustment_weight),
+                        str(social_adjustment_weight),
+                    ]
+                elif metaheuristic == "GA":
+                    control_command = [
+                        "python3",
+                        python_control_program,
+                        metaheuristic,
+                        work_path,
+                        str(population_size),
+                        str(max_generations),
+                        str(elite_count),
+                        str(crossover_fraction),
+                    ]
+                elif metaheuristic == "WOA":
+                    control_command = [
+                        "python3",
+                        python_control_program,
+                        metaheuristic,
+                        work_path,
+                        str(population_size),
+                        str(max_generations),
+                        str(spiral_coefficient),
+                    ]
+                elif metaheuristic == "BA":
+                    control_command = [
+                        "python3",
+                        python_control_program,
+                        metaheuristic,
+                        work_path,
+                        str(nScoutBees),
+                        str(max_generations),
+                        str(nEliteSites),
+                        str(nSelectedSites),
+                        str(nEliteBeesPerSite),
+                        str(nBeesPerSite),
+                        str(neighborhood_radius),
+                    ]
+                elif metaheuristic == "DE":
+                    control_command = [
+                        "python3",
+                        python_control_program,
+                        metaheuristic,
+                        work_path,
+                        str(population_size),
+                        str(max_generations),
+                        str(F),
+                        str(CR),
+                    ]
+                else:
+                    raise RuntimeError("Metaheuristic not implemented for control_command.")
+
+                processo_matlab = start_process(control_command)
 
                 print("work_path")
                 print(work_path)
