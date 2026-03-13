@@ -13,7 +13,7 @@ if __package__ in (None, ""):
         automatic_reading,
         automatic_save,
         save_log,
-        save_plot_placeholders,
+        save_plot_artifacts,
     )
     from python_runtime.optimizers import run_bees, run_de, run_ga, run_pso, run_woa
 else:
@@ -24,7 +24,7 @@ else:
         automatic_reading,
         automatic_save,
         save_log,
-        save_plot_placeholders,
+        save_plot_artifacts,
     )
     from .optimizers import run_bees, run_de, run_ga, run_pso, run_woa
 
@@ -115,7 +115,7 @@ def main(argv=None):
                 "optimizer_info": optimizer_info,
             },
         )
-        save_plot_placeholders(
+        save_plot_artifacts(
             destination_path,
             {
                 "route": route,

@@ -1,5 +1,8 @@
 import json
+import shutil
 import socket
+import subprocess
+import tempfile
 import time
 from pathlib import Path
 
@@ -119,26 +122,32 @@ def save_log(destination_path, payload):
                 file.write(f"{key}: {value}\n")
 
 
-def save_plot_placeholders(destination_path, payload):
+def save_plot_artifacts(destination_path, payload):
     destination = Path(destination_path)
     figure_payload = json.dumps(payload, indent=2)
 
     for filename in ("Data_and_displacement.fig", "Route.fig"):
         (destination / filename).write_text(figure_payload, encoding="utf-8")
 
-    # Placeholder 1x1 JPEG so downstream paths keep existing names.
-    jpeg_bytes = (
-        b"\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00"
-        b"\xff\xdb\x00C\x00\x08\x06\x06\x07\x06\x05\x08\x07\x07\x07\x09\x09\x08"
-        b"\x0a\x0c\x14\x0d\x0c\x0b\x0b\x0c\x19\x12\x13\x0f\x14\x1d\x1a\x1f\x1e"
-        b"\x1d\x1a\x1c\x1c $.',#\x1c\x1c(7),01444\x1f'9=82<.342"
-        b"\xff\xc0\x00\x11\x08\x00\x01\x00\x01\x03\x01\"\x00\x02\x11\x01\x03\x11\x01"
-        b"\xff\xc4\x00\x14\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-        b"\x00\x00\x00\x08\xff\xc4\x00\x14\x10\x01\x00\x00\x00\x00\x00\x00\x00\x00"
-        b"\x00\x00\x00\x00\x00\x00\x00\x08\xff\xda\x00\x08\x01\x01\x00\x00?\x00\xd2"
-        b"\xcf \xff\xd9"
-    )
-    (destination / "figure.jpg").write_bytes(jpeg_bytes)
+    points = _collect_points(payload)
+    if not points:
+        points = [[0.0, 0.0], [1.0, 1.0]]
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir_path = Path(temp_dir)
+        data_ppm = temp_dir_path / "data_and_displacement.ppm"
+        route_ppm = temp_dir_path / "route.ppm"
+
+        _write_plot_ppm(data_ppm, payload, mode="data")
+        _write_plot_ppm(route_ppm, payload, mode="route")
+
+        data_jpg = destination / "Data_and_displacement.jpg"
+        route_jpg = destination / "Route.jpg"
+
+        _convert_ppm_to_jpg(data_ppm, data_jpg)
+        _convert_ppm_to_jpg(route_ppm, route_jpg)
+
+        shutil.copyfile(data_jpg, destination / "figure.jpg")
 
 
 def _split_value(line):
@@ -148,3 +157,166 @@ def _split_value(line):
 def _split_pair(line):
     left, right = [item.strip() for item in line.split("/-/")]
     return [float(left), float(right)]
+
+
+def _collect_points(payload):
+    points = []
+
+    for point in payload.get("route", []):
+        points.append(point)
+
+    for iteration in payload.get("iterations", []):
+        points.extend(iteration.get("pdp_space", []))
+        points.extend(iteration.get("obstacles", []))
+        if iteration.get("current_position"):
+            points.append(iteration["current_position"])
+        if iteration.get("chosen_point"):
+            points.append(iteration["chosen_point"])
+        if iteration.get("final_objective"):
+            points.append(iteration["final_objective"])
+
+    return points
+
+
+def _write_plot_ppm(ppm_path, payload, mode):
+    width = 1200
+    height = 900
+    margin = 60
+
+    image = [[[255, 255, 255] for _ in range(width)] for _ in range(height)]
+    points = _collect_points(payload)
+    min_x, max_x, min_y, max_y = _bounds(points)
+
+    def to_pixel(point):
+        x, y = point
+        usable_width = width - 2 * margin
+        usable_height = height - 2 * margin
+        pixel_x = margin + int((x - min_x) / (max_x - min_x) * usable_width)
+        pixel_y = height - margin - int((y - min_y) / (max_y - min_y) * usable_height)
+        return pixel_x, pixel_y
+
+    _draw_axes(image, width, height, margin)
+
+    if mode == "data":
+        for iteration in payload.get("iterations", []):
+            pdp_space = iteration.get("pdp_space", [])
+            obstacles = iteration.get("obstacles", [])
+            current_position = iteration.get("current_position")
+            chosen_point = iteration.get("chosen_point")
+            final_objective = iteration.get("final_objective")
+
+            _draw_polyline(image, pdp_space, to_pixel, [40, 90, 180], closed=False, thickness=2)
+            _draw_points(image, obstacles, to_pixel, [180, 90, 20], radius=3)
+            _draw_points(image, [final_objective] if final_objective else [], to_pixel, [20, 150, 20], radius=7)
+            _draw_points(image, [current_position] if current_position else [], to_pixel, [80, 80, 80], radius=5)
+            _draw_points(image, [chosen_point] if chosen_point else [], to_pixel, [200, 40, 40], radius=5)
+
+        _draw_polyline(image, payload.get("route", []), to_pixel, [0, 0, 0], closed=False, thickness=3)
+    else:
+        route = payload.get("route", [])
+        _draw_polyline(image, route, to_pixel, [0, 0, 0], closed=False, thickness=4)
+        _draw_points(image, route, to_pixel, [200, 40, 40], radius=4)
+        if route:
+            _draw_points(image, [route[0]], to_pixel, [40, 90, 180], radius=6)
+            _draw_points(image, [route[-1]], to_pixel, [20, 150, 20], radius=6)
+
+    with ppm_path.open("w", encoding="ascii") as ppm:
+        ppm.write(f"P3\n{width} {height}\n255\n")
+        for row in image:
+            ppm.write(" ".join(f"{r} {g} {b}" for r, g, b in row))
+            ppm.write("\n")
+
+
+def _bounds(points):
+    xs = [point[0] for point in points]
+    ys = [point[1] for point in points]
+    min_x = min(xs)
+    max_x = max(xs)
+    min_y = min(ys)
+    max_y = max(ys)
+
+    if min_x == max_x:
+        min_x -= 1.0
+        max_x += 1.0
+    if min_y == max_y:
+        min_y -= 1.0
+        max_y += 1.0
+
+    padding_x = (max_x - min_x) * 0.1
+    padding_y = (max_y - min_y) * 0.1
+    return min_x - padding_x, max_x + padding_x, min_y - padding_y, max_y + padding_y
+
+
+def _draw_axes(image, width, height, margin):
+    for x in range(margin, width - margin):
+        _set_pixel(image, x, height - margin, [220, 220, 220])
+    for y in range(margin, height - margin):
+        _set_pixel(image, margin, y, [220, 220, 220])
+
+
+def _draw_polyline(image, points, to_pixel, color, closed, thickness):
+    if len(points) < 2:
+        return
+
+    for index in range(len(points) - 1):
+        _draw_line(image, to_pixel(points[index]), to_pixel(points[index + 1]), color, thickness)
+
+    if closed:
+        _draw_line(image, to_pixel(points[-1]), to_pixel(points[0]), color, thickness)
+
+
+def _draw_points(image, points, to_pixel, color, radius):
+    for point in points:
+        _draw_circle(image, to_pixel(point), radius, color)
+
+
+def _draw_line(image, start, end, color, thickness):
+    x0, y0 = start
+    x1, y1 = end
+    dx = abs(x1 - x0)
+    dy = -abs(y1 - y0)
+    sx = 1 if x0 < x1 else -1
+    sy = 1 if y0 < y1 else -1
+    error = dx + dy
+
+    while True:
+        _draw_circle(image, (x0, y0), thickness, color)
+        if x0 == x1 and y0 == y1:
+            break
+        error2 = 2 * error
+        if error2 >= dy:
+            error += dy
+            x0 += sx
+        if error2 <= dx:
+            error += dx
+            y0 += sy
+
+
+def _draw_circle(image, center, radius, color):
+    cx, cy = center
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            if dx * dx + dy * dy <= radius * radius:
+                _set_pixel(image, cx + dx, cy + dy, color)
+
+
+def _set_pixel(image, x, y, color):
+    if 0 <= y < len(image) and 0 <= x < len(image[0]):
+        image[y][x] = color
+
+
+def _convert_ppm_to_jpg(source_path, destination_path):
+    subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-loglevel",
+            "error",
+            "-i",
+            str(source_path),
+            str(destination_path),
+        ],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )

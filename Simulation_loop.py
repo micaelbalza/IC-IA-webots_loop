@@ -406,7 +406,7 @@ if __name__ == "__main__":
                 time.sleep(60) # 5
 
                 time.sleep(Matlab_initiation_time)
-                print("Matlab has been started.")
+                print("Python control program has been started.")
 
                 # =============================================================
                 # C) Aguarda finalizar por MATLAB ENCERRAR ou TIMEOUT
@@ -418,7 +418,7 @@ if __name__ == "__main__":
                 t0 = time.time()
 
                 while True:
-                    # 1) Checar se Matlab terminou
+                    # 1) Checar se o programa de controle terminou
                     matlab_returncode = processo_matlab.poll()
                     if matlab_returncode is not None:
                         process_termination_count += 1
@@ -426,10 +426,10 @@ if __name__ == "__main__":
 
                         if matlab_returncode == 0:
                             simulations_matlab_success.append(current_simulation_number_str)
-                            print("Matlab terminou com sucesso (returncode=0).")
+                            print("Control program terminou com sucesso (returncode=0).")
                         else:
                             simulations_matlab_error.append(current_simulation_number_str)
-                            print(f"Matlab terminou com erro (returncode={matlab_returncode}).")
+                            print(f"Control program terminou com erro (returncode={matlab_returncode}).")
                         break
 
                     # 2) Checar timeout
@@ -446,7 +446,7 @@ if __name__ == "__main__":
             finally:
                 # =============================================================
                 # D) Encerramento garantido (SEMPRE)
-                # - Mesmo se Matlab terminou sozinho (sucesso/erro),
+                # - Mesmo se o programa de controle terminou sozinho (sucesso/erro),
                 #   ainda garantimos que Webots e filhos sejam encerrados.
                 # - Se deu timeout, este bloco é o responsável por matar tudo.
                 # =============================================================
@@ -465,8 +465,8 @@ if __name__ == "__main__":
                 if ended_by_timeout:
                     print(f"\n The simulation {simulation_name}{current_simulation_number_str} finished (TIMEOUT)\n")
                 else:
-                    # terminou pelo Matlab encerrar
-                    print(f"\n The simulation {simulation_name}{current_simulation_number_str} finished (MATLAB_END rc={matlab_returncode})\n")
+                    # terminou pelo programa de controle encerrar
+                    print(f"\n The simulation {simulation_name}{current_simulation_number_str} finished (CONTROL_PROGRAM_END rc={matlab_returncode})\n")
 
                 # Mantido conforme solicitado
                 time.sleep(130)
@@ -485,22 +485,22 @@ if __name__ == "__main__":
 
             log_file.write("\n")
 
-            log_file.write("Number of simulations where MATLAB process ended: {}\n".format(process_termination_count))
-            log_file.write("Simulations where MATLAB process ended:\n")
+            log_file.write("Number of simulations where control program ended: {}\n".format(process_termination_count))
+            log_file.write("Simulations where control program ended:\n")
             for sim in simulations_process_termination:
                 log_file.write(sim + "\n")
 
             log_file.write("\n")
 
-            log_file.write("MATLAB ended with SUCCESS (returncode=0): {}\n".format(len(simulations_matlab_success)))
-            log_file.write("Simulations with MATLAB success:\n")
+            log_file.write("Control program ended with SUCCESS (returncode=0): {}\n".format(len(simulations_matlab_success)))
+            log_file.write("Simulations with control program success:\n")
             for sim in simulations_matlab_success:
                 log_file.write(sim + "\n")
 
             log_file.write("\n")
 
-            log_file.write("MATLAB ended with ERROR (returncode!=0): {}\n".format(len(simulations_matlab_error)))
-            log_file.write("Simulations with MATLAB error:\n")
+            log_file.write("Control program ended with ERROR (returncode!=0): {}\n".format(len(simulations_matlab_error)))
+            log_file.write("Simulations with control program error:\n")
             for sim in simulations_matlab_error:
                 log_file.write(sim + "\n")
 
