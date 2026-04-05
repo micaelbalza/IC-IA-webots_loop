@@ -1,13 +1,13 @@
 # 🛠️ Projeto de Navegação Robótica com Simulações no Webots
 
-Este repositório contém a plataforma de simulação desenvolvida para testar o algoritmo de navegação **MHRTSN** (MetaHeuristic Real-Time Safe Navigation). A plataforma integra o **MATLAB** e o **Webots**, utilizando um fluxo automatizado para configurar, executar e salvar os resultados das simulações.
+Este repositório contém a plataforma de simulação desenvolvida para testar o algoritmo de navegação **MHRTSN** (MetaHeuristic Real-Time Safe Navigation). A plataforma utiliza o **Webots** com um fluxo automatizado para configurar, executar e salvar os resultados das simulações.
 
 ---
 
 ## 📋 **Pré-requisitos**
 
 Antes de começar, certifique-se de ter os seguintes softwares instalados:
-- **MATLAB**: Versão 2022a ou superior recomendada.
+- **Python 3**
 - **Webots**: Versão compatível com seu sistema operacional.
 
 ---
@@ -36,8 +36,8 @@ Antes de começar, certifique-se de ter os seguintes softwares instalados:
         "alpha": "1.0",
         
         "environment": "/home/IC-IA-webots_loop/worlds/Comparisons - article 2.wbt",
-        "matlab_file": "/home/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
-        "path_to_save_simulation_files": "/home/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
+        "metaheuristic_runner_path": "/home/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+        "path_to_save_simulation_files": "/home/IC-IA-webots_loop/simulation_results/",
         "end_point_x": "8.5",
         "end_point_y": "5.6",
         
@@ -78,4 +78,3 @@ Os resultados das simulações serão salvos em um diretório configurado no JSO
 O algoritmo **MHRTSN** é uma abordagem inovadora baseada em meta-heurísticas para planejamento de navegação em ambientes desconhecidos. Ele foi testado extensivamente utilizando esta plataforma, demonstrando sua eficiência em situações complexas.
 
 ---
-

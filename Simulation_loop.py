@@ -149,6 +149,7 @@ if __name__ == "__main__":
 
         environment_file = actual_setup["environment"]
         path_to_save_simulation_files = actual_setup["path_to_save_simulation_files"]
+        metaheuristic_runner_path = actual_setup["metaheuristic_runner_path"]
 
         simulation_repeat = int(actual_setup["simulation_repeat"])
         simulation_time = float(actual_setup["average_time_in_each_simulation"])
@@ -158,8 +159,6 @@ if __name__ == "__main__":
         end_point_y = float(actual_setup["end_point_y"])
 
         # ------------------------- montar nome e parâmetros -------------------
-        Matlab_file = None
-        matlab_parameters_str = None
         simulation_name = None
 
         if metaheuristic == 'PSO':
@@ -167,14 +166,6 @@ if __name__ == "__main__":
             max_generations = int(actual_setup["max_generations"])
             self_adjustment_weight = float(actual_setup["self_adjustment_weight"])
             social_adjustment_weight = float(actual_setup["social_adjustment_weight"])
-            Matlab_file = actual_setup["matlab_file"]
-
-            matlab_parameters = [
-                population_size, max_generations,
-                self_adjustment_weight, social_adjustment_weight,
-                robot_radius, alpha
-            ]
-            matlab_parameters_str = "','".join(map(str, matlab_parameters))
 
             simulation_name = (
                 os.path.splitext(os.path.basename(environment_file))[0] + "-" +
@@ -189,14 +180,6 @@ if __name__ == "__main__":
             max_generations = int(actual_setup["max_generations"])
             elite_count = int(actual_setup["elite_count"])
             crossover_fraction = float(actual_setup["crossover_fraction"])
-            Matlab_file = actual_setup["matlab_file"]
-
-            matlab_parameters = [
-                population_size, max_generations,
-                elite_count, crossover_fraction,
-                robot_radius, alpha
-            ]
-            matlab_parameters_str = "','".join(map(str, matlab_parameters))
 
             simulation_name = (
                 os.path.splitext(os.path.basename(environment_file))[0] + "-" +
@@ -210,10 +193,6 @@ if __name__ == "__main__":
             population_size = int(actual_setup["population_size"])
             max_generations = int(actual_setup["max_generations"])
             spiral_coefficient = float(actual_setup["spiral_coefficient"])
-            Matlab_file = actual_setup["matlab_file"]
-
-            matlab_parameters = [population_size, max_generations, spiral_coefficient]
-            matlab_parameters_str = "','".join(map(str, matlab_parameters))
 
             simulation_name = (
                 os.path.splitext(os.path.basename(environment_file))[0] + "-" +
@@ -230,15 +209,6 @@ if __name__ == "__main__":
             nSelectedSites = int(actual_setup["nSelectedSites"])
             nEliteBeesPerSite = int(actual_setup["nEliteBeesPerSite"])
             nBeesPerSite = int(actual_setup["nBeesPerSite"])
-            Matlab_file = actual_setup["matlab_file"]
-
-            matlab_parameters = [
-                nScoutBees, max_generations,
-                nEliteSites, nSelectedSites,
-                nEliteBeesPerSite, nBeesPerSite,
-                neighborhood_radius
-            ]
-            matlab_parameters_str = "','".join(map(str, matlab_parameters))
 
             simulation_name = (
                 os.path.splitext(os.path.basename(environment_file))[0] + "-" +
@@ -252,10 +222,6 @@ if __name__ == "__main__":
             max_generations = int(actual_setup["max_generations"])
             F = float(actual_setup["F"])
             CR = float(actual_setup["CR"])
-            Matlab_file = actual_setup["matlab_file"]
-
-            matlab_parameters = [population_size, max_generations, F, CR]
-            matlab_parameters_str = "','".join(map(str, matlab_parameters))
 
             simulation_name = (
                 os.path.splitext(os.path.basename(environment_file))[0] + "-" +
@@ -330,13 +296,7 @@ if __name__ == "__main__":
                 # =============================================================
                 work_path = destination_folder
 
-                python_control_program = os.path.join(
-                    os.path.dirname(__file__),
-                    "controllers",
-                    "my_controller_Micael",
-                    "python_runtime",
-                    "control_program.py",
-                )
+                python_control_program = metaheuristic_runner_path
 
                 if metaheuristic == 'PSO':
                     control_command = [
