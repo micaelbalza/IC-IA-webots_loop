@@ -54,7 +54,8 @@ WORKDIR /home/simulator/IC-IA-webots_loop
 
 COPY --chown=${USERNAME}:${USER_GID} . .
 
-RUN mkdir -p simulation_results \
+RUN make -C controllers/my_controller_Micael \
+    && mkdir -p simulation_results \
     && chown -R "${USERNAME}:${USER_GID}" /home/simulator/IC-IA-webots_loop
 
 USER ${USERNAME}

@@ -20,7 +20,7 @@ No diretório raiz do projeto:
 docker compose build
 ```
 
-O build precisa de acesso à internet para baixar o Webots R2025a a partir do repositório Debian da Cyberbotics.
+O build precisa de acesso à internet para baixar o Webots R2025a a partir do repositório Debian da Cyberbotics. Durante o build, a imagem também compila o controlador C `controllers/my_controller_Micael`, então a simulação já inicia com o controlador correto dentro do container.
 
 Ou, sem Compose:
 
