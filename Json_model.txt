@@ -9,15 +9,15 @@
             "alpha": "1.4",
             
             "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/SX.wbt",
-            "matlab_file": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
-            "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
+            "metaheuristic_runner_path": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+            "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/simulation_results/",
             "end_point_x": "4.0",
             "end_point_y": "4.0",
             
             "simulation_repeat": "5",
             "average_time_in_each_simulation": "160",
             "webots_initiation_time": "15",
-            "matlab_initiation_time": "20"
+            "control_program_initiation_time": "20"
     },
     
     
@@ -32,15 +32,15 @@
             "alpha": "1.4",
             
             "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/SX.wbt",
-            "matlab_file": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
-            "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
+            "metaheuristic_runner_path": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+            "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/simulation_results/",
             "end_point_x": "4.0",
             "end_point_y": "4.0",
             
             "simulation_repeat": "5",
             "average_time_in_each_simulation": "160",
             "webots_initiation_time": "15",
-            "matlab_initiation_time": "20"
+            "control_program_initiation_time": "20"
     },
     
     
@@ -58,13 +58,13 @@
             "alpha": "1.4",
             
             "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/AMB_06.wbt",
-            "matlab_file": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/",
-            "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/Matlab/swap_webots_matlab/",
+            "metaheuristic_runner_path": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+            "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/simulation_results/",
             "end_point_x": "2.0",
             "end_point_y": "0.0",
             
             "simulation_repeat": "60",
             "average_time_in_each_simulation": "160",
             "webots_initiation_time": "15",
-            "matlab_initiation_time": "20"
+            "control_program_initiation_time": "20"
     },

@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 
 
-class MatlabCompatibleClient:
+class ControlProgramClient:
     def __init__(self, host="localhost", port=12345, timeout_s=120.0):
         self.host = host
         self.port = port

@@ -1,1 +1,1 @@
-"""Python replacement for the MATLAB control programs."""
+"""Python control-program runtime for the Webots simulation loop."""

@@ -9,7 +9,7 @@ if __package__ in (None, ""):
     from python_runtime.fitness import g_j
     from python_runtime.geometry import c_space
     from python_runtime.io_bridge import (
-        MatlabCompatibleClient,
+        ControlProgramClient,
         automatic_reading,
         automatic_save,
         save_log,
@@ -20,7 +20,7 @@ else:
     from .fitness import g_j
     from .geometry import c_space
     from .io_bridge import (
-        MatlabCompatibleClient,
+        ControlProgramClient,
         automatic_reading,
         automatic_save,
         save_log,
@@ -46,7 +46,7 @@ def main(argv=None):
     seed = round(time.time() * 10000)
     random.seed(seed)
 
-    client = MatlabCompatibleClient()
+    client = ControlProgramClient()
     cpu_times = []
     wall_times = []
     pr = []
@@ -122,7 +122,7 @@ def main(argv=None):
                 "iterations": trajectory_debug,
                 "seed": seed,
                 "optimizer": optimizer_info,
-                "note": "Python placeholder artifact replacing MATLAB .fig output.",
+                "note": "Python artifact compatible with the legacy .fig output contract.",
             },
         )
 

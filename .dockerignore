@@ -1,0 +1,13 @@
+.git
+.gitignore
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.codex/
+simulation_results/
+controllers/my_controller_Micael/python_runtime/__pycache__/
+controllers/my_controller_Micael/my_controller_Micael
+controllers/my_controller_Micael/my_controller_Micael.d
+controllers/my_controller_Micael/build/
+*.log

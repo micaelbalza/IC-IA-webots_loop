@@ -66,22 +66,6 @@
 ###-----------------------------------------------------------------------------
 
 #####----------------------------Micael:v2------------------
-#MATLABHOME = /usr/local/MATLAB/R2022a
- #C_SOURCES = /usr/local/MATLAB/R2022a/extern/include
- 
-#INCLUDE = -I"/home/micaelbalza/Desktop/IC-IA-webots/controllers/my_controller_Micael/include"
-#INCLUDE += -I"/usr/local/MATLAB/R2022a/extern/include"
-#LIBRARIES = -L"home/micaelbalza/Desktop/IC-IA-webots/controllers/my_controller_Micael/glnxa64"
-#LIBRARIES += -L"/usr/local/MATLAB/R2022a/bin/glnxa64"
-
-
-#INCLUDE = -I"/usr/local/MATLAB/R2022a/extern/include"
-#INCLUDE += -I"/usr/local/MATLAB/R2022a/extern/include"
- #INCLUDE = -I/usr/local/MATLAB/R2022a/extern/include
-#LIBRARIES = -L"/usr/local/MATLAB/R2022a/bin/glnxa64"
-#LIBRARIES = -L/usr/local/MATLAB/R2022a/extern/include/engine.h
-
-#LFLAGS = -s -Wl,--no-undefined -Wl,-rpath-link
 LFLAGS = -pthread
 #USE_C_API = true
  

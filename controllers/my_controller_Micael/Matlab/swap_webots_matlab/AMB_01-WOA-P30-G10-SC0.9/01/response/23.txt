@@ -1,2 +1,0 @@
-pOL(m)(metaheuristic result): X Y
-2.956005 4.682719

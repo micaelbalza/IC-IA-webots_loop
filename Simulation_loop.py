@@ -10,7 +10,7 @@ from typing import Optional
 # 1) UTILITÁRIOS ROBUSTOS PARA INICIAR E ENCERRAR PROCESSOS (LINUX)
 #
 # Objetivo:
-# - Evitar que Webots/Matlab deixem processos filhos órfãos quando ocorre erro.
+# - Evitar que Webots/programa de controle deixem processos filhos órfãos quando ocorre erro.
 # - Garantir que ao final de cada simulação (sucesso, erro ou timeout) tudo seja
 #   encerrado e o sistema fique "limpo" para a próxima repetição.
 #
@@ -115,16 +115,16 @@ def clean_folder(caminho_pasta):
 # Fluxo geral:
 #   - Lê simulationSetup.json
 #   - Para cada setup:
-#       - Monta simulation_name e parâmetros do Matlab
+#       - Monta simulation_name e parâmetros do programa de controle
 #       - Cria pasta principal
 #       - Repete 'simulation_repeat' vezes:
 #           - Cria pasta da repetição (request/response)
 #           - Inicia Webots
-#           - Inicia Matlab (-batch)
+#           - Inicia o programa de controle
 #           - Aguarda terminar por:
-#               (a) Matlab encerrar (sucesso/erro)  -> PARA AQUI (break)
+#               (a) programa de controle encerrar (sucesso/erro) -> PARA AQUI (break)
 #               (b) Timeout                          -> PARA AQUI (break)
-#           - SEMPRE: encerra processos (Matlab/Webots + filhos)
+#           - SEMPRE: encerra processos (programa de controle/Webots + filhos)
 #           - SEMPRE: espera sleep(130) antes da próxima simulação
 #       - Escreve log.txt ao final do setup
 # =============================================================================
@@ -154,7 +154,7 @@ if __name__ == "__main__":
         simulation_repeat = int(actual_setup["simulation_repeat"])
         simulation_time = float(actual_setup["average_time_in_each_simulation"])
         Webots_initiation_time = float(actual_setup["webots_initiation_time"])
-        Matlab_initiation_time = float(actual_setup["matlab_initiation_time"])
+        control_program_initiation_time = float(actual_setup["control_program_initiation_time"])
         end_point_x = float(actual_setup["end_point_x"])
         end_point_y = float(actual_setup["end_point_y"])
 
@@ -245,8 +245,8 @@ if __name__ == "__main__":
         process_termination_count = 0
         simulations_time_limit = []
         simulations_process_termination = []
-        simulations_matlab_success = []
-        simulations_matlab_error = []
+        simulations_control_program_success = []
+        simulations_control_program_error = []
 
         # ---------------------------------------------------------------------
         # Loop de repetições
@@ -269,11 +269,11 @@ if __name__ == "__main__":
             os.makedirs(destination_folder + "response/", exist_ok=True)
 
             processo_webots = None
-            processo_matlab = None
+            control_program_process = None
 
             # flags de término (para log e debug)
             ended_by_timeout = False
-            matlab_returncode = None
+            control_program_returncode = None
 
             try:
                 # =============================================================
@@ -292,7 +292,7 @@ if __name__ == "__main__":
                 print("Webots has been started.")
 
                 # =============================================================
-                # B) Inicia Matlab
+                # B) Inicia o programa de controle
                 # =============================================================
                 work_path = destination_folder
 
@@ -358,38 +358,38 @@ if __name__ == "__main__":
                 else:
                     raise RuntimeError("Metaheuristic not implemented for control_command.")
 
-                processo_matlab = start_process(control_command)
+                control_program_process = start_process(control_command)
 
                 print("work_path")
                 print(work_path)
                 
                 time.sleep(60) # 5
 
-                time.sleep(Matlab_initiation_time)
+                time.sleep(control_program_initiation_time)
                 print("Python control program has been started.")
 
                 # =============================================================
-                # C) Aguarda finalizar por MATLAB ENCERRAR ou TIMEOUT
+                # C) Aguarda finalizar por PROGRAMA DE CONTROLE ENCERRAR ou TIMEOUT
                 #
                 # Correção importante:
-                # - Se o Matlab terminar, nós SAÍMOS do loop (break) imediatamente.
+                # - Se o programa de controle terminar, nós SAÍMOS do loop (break) imediatamente.
                 # - Isso evita que "dê timeout" mesmo quando a simulação concluiu.
                 # =============================================================
                 t0 = time.time()
 
                 while True:
                     # 1) Checar se o programa de controle terminou
-                    matlab_returncode = processo_matlab.poll()
-                    if matlab_returncode is not None:
+                    control_program_returncode = control_program_process.poll()
+                    if control_program_returncode is not None:
                         process_termination_count += 1
                         simulations_process_termination.append(current_simulation_number_str)
 
-                        if matlab_returncode == 0:
-                            simulations_matlab_success.append(current_simulation_number_str)
+                        if control_program_returncode == 0:
+                            simulations_control_program_success.append(current_simulation_number_str)
                             print("Control program terminou com sucesso (returncode=0).")
                         else:
-                            simulations_matlab_error.append(current_simulation_number_str)
-                            print(f"Control program terminou com erro (returncode={matlab_returncode}).")
+                            simulations_control_program_error.append(current_simulation_number_str)
+                            print(f"Control program terminou com erro (returncode={control_program_returncode}).")
                         break
 
                     # 2) Checar timeout
@@ -410,13 +410,19 @@ if __name__ == "__main__":
                 #   ainda garantimos que Webots e filhos sejam encerrados.
                 # - Se deu timeout, este bloco é o responsável por matar tudo.
                 # =============================================================
-                terminate_process_tree(processo_matlab, timeout_s=25)
+                terminate_process_tree(control_program_process, timeout_s=25)
                 terminate_process_tree(processo_webots, timeout_s=25)
 
                 # Fallback para controller específico (caso raro fique órfão)
+                project_root = os.path.dirname(os.path.abspath(__file__))
+                controller_binary = os.path.join(
+                    project_root,
+                    "controllers",
+                    "my_controller_Micael",
+                    "my_controller_Micael",
+                )
                 subprocess.run(
-                    ['pkill', '-f',
-                     '/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/my_controller_Micael'],
+                    ['pkill', '-f', controller_binary],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL
                 )
@@ -426,7 +432,7 @@ if __name__ == "__main__":
                     print(f"\n The simulation {simulation_name}{current_simulation_number_str} finished (TIMEOUT)\n")
                 else:
                     # terminou pelo programa de controle encerrar
-                    print(f"\n The simulation {simulation_name}{current_simulation_number_str} finished (CONTROL_PROGRAM_END rc={matlab_returncode})\n")
+                    print(f"\n The simulation {simulation_name}{current_simulation_number_str} finished (CONTROL_PROGRAM_END rc={control_program_returncode})\n")
 
                 # Mantido conforme solicitado
                 time.sleep(130)
@@ -452,16 +458,16 @@ if __name__ == "__main__":
 
             log_file.write("\n")
 
-            log_file.write("Control program ended with SUCCESS (returncode=0): {}\n".format(len(simulations_matlab_success)))
+            log_file.write("Control program ended with SUCCESS (returncode=0): {}\n".format(len(simulations_control_program_success)))
             log_file.write("Simulations with control program success:\n")
-            for sim in simulations_matlab_success:
+            for sim in simulations_control_program_success:
                 log_file.write(sim + "\n")
 
             log_file.write("\n")
 
-            log_file.write("Control program ended with ERROR (returncode!=0): {}\n".format(len(simulations_matlab_error)))
+            log_file.write("Control program ended with ERROR (returncode!=0): {}\n".format(len(simulations_control_program_error)))
             log_file.write("Simulations with control program error:\n")
-            for sim in simulations_matlab_error:
+            for sim in simulations_control_program_error:
                 log_file.write(sim + "\n")
 
     print("All simulations are over - the program has ended")

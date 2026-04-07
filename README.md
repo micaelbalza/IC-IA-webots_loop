@@ -44,7 +44,7 @@ Antes de começar, certifique-se de ter os seguintes softwares instalados:
         "simulation_repeat": "25",
         "average_time_in_each_simulation": "160",
         "webots_initiation_time": "15",
-        "matlab_initiation_time": "20"
+        "control_program_initiation_time": "20"
 }
    ```
 
@@ -61,6 +61,8 @@ Antes de começar, certifique-se de ter os seguintes softwares instalados:
    - Ler as configurações do arquivo `simulationSetup.json`.
    - Configurar e iniciar as simulações no **Webots**.
    - Salvar os resultados em um diretório específico.
+
+Para executar em container Docker, consulte [DOCKER.md](DOCKER.md).
 
 ---
 

@@ -1,0 +1,13 @@
+services:
+  simulator:
+    build:
+      context: .
+      args:
+        USER_UID: "${UID:-1000}"
+        USER_GID: "${GID:-1000}"
+    image: ic-ia-webots-loop:latest
+    shm_size: "2gb"
+    volumes:
+      - ./simulation_results:/home/simulator/IC-IA-webots_loop/simulation_results
+      - ./simulationSetup.json:/home/simulator/IC-IA-webots_loop/simulationSetup.json:ro
+    command: ["python3", "Simulation_loop.py"]
