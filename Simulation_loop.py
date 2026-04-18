@@ -3,6 +3,7 @@ import os
 import time
 import json
 import signal
+import re
 from typing import Optional
 
 
@@ -18,7 +19,7 @@ from typing import Optional
 # - Iniciar cada processo em uma NOVA SESSÃO (process group) via start_new_session=True
 # - Encerrar o GRUPO inteiro (processo + filhos) com SIGTERM e, se necessário, SIGKILL
 # =============================================================================
-def start_process(cmd, env=None, cwd=None):
+def start_process(cmd, env=None, cwd=None, stdout_path=None, stderr_path=None):
     """
     Inicia o processo em uma nova sessão (process group).
 
@@ -27,14 +28,27 @@ def start_process(cmd, env=None, cwd=None):
     - stdout/stderr são descartados para evitar travamentos por buffers.
       (Se quiser depurar, redirecione para arquivo).
     """
-    return subprocess.Popen(
+    stdout_target = subprocess.DEVNULL
+    stderr_target = subprocess.DEVNULL
+    opened_streams = []
+
+    if stdout_path:
+        stdout_target = open(stdout_path, "ab")
+        opened_streams.append(stdout_target)
+    if stderr_path:
+        stderr_target = open(stderr_path, "ab")
+        opened_streams.append(stderr_target)
+
+    process = subprocess.Popen(
         cmd,
         env=env,
         cwd=cwd,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=stdout_target,
+        stderr=stderr_target,
         start_new_session=True  # <- ESSENCIAL (Linux)
     )
+    process._codex_opened_streams = opened_streams
+    return process
 
 
 def terminate_process_tree(p: Optional[subprocess.Popen], timeout_s: float = 20.0):
@@ -49,8 +63,16 @@ def terminate_process_tree(p: Optional[subprocess.Popen], timeout_s: float = 20.
     if p is None:
         return
 
+    def close_streams():
+        for stream in getattr(p, "_codex_opened_streams", []):
+            try:
+                stream.close()
+            except Exception:
+                pass
+
     # Se já terminou, não faz nada
     if p.poll() is not None:
+        close_streams()
         return
 
     # 1) Encerramento gracioso
@@ -65,6 +87,7 @@ def terminate_process_tree(p: Optional[subprocess.Popen], timeout_s: float = 20.
     t0 = time.time()
     while time.time() - t0 < timeout_s:
         if p.poll() is not None:
+            close_streams()
             return
         time.sleep(0.2)
 
@@ -75,6 +98,7 @@ def terminate_process_tree(p: Optional[subprocess.Popen], timeout_s: float = 20.
         pass
     except Exception:
         pass
+    close_streams()
 
 
 # =============================================================================
@@ -109,6 +133,281 @@ def clean_folder(caminho_pasta):
             print(f"Erro ao excluir {arquivo_path}: {e}")
 
 
+def safe_remove_file(file_path):
+    if not file_path:
+        return
+    try:
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+    except OSError:
+        pass
+
+
+def restore_file_contents(file_path, original_contents):
+    if original_contents is None:
+        return
+    try:
+        with open(file_path, "w", encoding="utf-8") as restored_file:
+            restored_file.write(original_contents)
+    except OSError:
+        pass
+
+
+def parse_optional_noise_config(actual_setup):
+    """
+    Retorna o bloco opcional de configuração de ruído do setup.
+    """
+    sensor_noise = actual_setup.get("sensor_noise")
+    if not sensor_noise:
+        return None
+    if not isinstance(sensor_noise, dict):
+        raise ValueError("The optional 'sensor_noise' field must be an object in simulationSetup.json.")
+    return sensor_noise
+
+
+def parse_optional_noise_label(actual_setup, sensor_noise):
+    """
+    Retorna um sufixo opcional de nome para experimentos com ruído.
+    """
+    noise_label = actual_setup.get("sensor_noise_label")
+    if noise_label is None and sensor_noise:
+        noise_label = "NOISE"
+    if noise_label is None:
+        return ""
+
+    if not isinstance(noise_label, str):
+        noise_label = str(noise_label)
+
+    sanitized_label = re.sub(r"[^A-Za-z0-9._-]+", "_", noise_label.strip())
+    if not sanitized_label:
+        return ""
+    return "-" + sanitized_label
+
+
+def prepare_environment_with_noise(environment_file, destination_folder, sensor_noise):
+    """
+    Gera uma cópia temporária do mundo .wbt com a configuração opcional de ruído.
+
+    O arquivo original nunca é alterado. A cópia fica dentro da pasta da simulação
+    corrente para facilitar rastreabilidade e uso dentro do container.
+    """
+    if not sensor_noise:
+        return environment_file, None
+
+    with open(environment_file, "r", encoding="utf-8") as world_file:
+        original_world_text = world_file.read()
+    world_text = original_world_text
+
+    world_random_seed = sensor_noise.get("world_random_seed", sensor_noise.get("random_seed"))
+    if world_random_seed is not None:
+        world_text = update_named_block_fields(
+            world_text,
+            "WorldInfo",
+            {"randomSeed": world_random_seed},
+            apply_to_all=False,
+        )
+
+    gps_settings = normalize_noise_fields(
+        sensor_noise.get("gps"),
+        {
+            "accuracy": "accuracy",
+            "noiseCorrelation": "noiseCorrelation",
+            "noise_correlation": "noiseCorrelation",
+            "resolution": "resolution",
+            "speedNoise": "speedNoise",
+            "speed_noise": "speedNoise",
+            "speedResolution": "speedResolution",
+            "speed_resolution": "speedResolution",
+        },
+    )
+    if gps_settings:
+        world_text = update_named_block_fields(world_text, "GPS", gps_settings, apply_to_all=False)
+
+    compass_settings = normalize_noise_fields(
+        sensor_noise.get("compass"),
+        {
+            "lookupTable": "lookupTable",
+            "lookup_table": "lookupTable",
+            "resolution": "resolution",
+            "xAxis": "xAxis",
+            "x_axis": "xAxis",
+            "yAxis": "yAxis",
+            "y_axis": "yAxis",
+            "zAxis": "zAxis",
+            "z_axis": "zAxis",
+        },
+    )
+    if compass_settings:
+        world_text = update_named_block_fields(world_text, "Compass", compass_settings, apply_to_all=False)
+
+    distance_sensor_settings = normalize_noise_fields(
+        sensor_noise.get("distance_sensor"),
+        {
+            "lookupTable": "lookupTable",
+            "lookup_table": "lookupTable",
+            "resolution": "resolution",
+            "aperture": "aperture",
+            "gaussianWidth": "gaussianWidth",
+            "gaussian_width": "gaussianWidth",
+            "type": "type",
+            "redColorSensitivity": "redColorSensitivity",
+            "red_color_sensitivity": "redColorSensitivity",
+        },
+    )
+    if distance_sensor_settings:
+        world_text = update_named_block_fields(world_text, "DistanceSensor", distance_sensor_settings, apply_to_all=True)
+
+    trace_environment_file = os.path.join(
+        destination_folder,
+        f"{os.path.splitext(os.path.basename(environment_file))[0]}__runtime_noise.wbt",
+    )
+    with open(trace_environment_file, "w", encoding="utf-8") as temp_world_file:
+        temp_world_file.write(world_text)
+
+    with open(environment_file, "w", encoding="utf-8") as runtime_world_file:
+        runtime_world_file.write(world_text)
+
+    return environment_file, original_world_text
+
+
+def normalize_noise_fields(raw_settings, alias_map):
+    """
+    Normaliza aliases de nomes de campos vindos do JSON.
+    """
+    if not raw_settings:
+        return None
+    if not isinstance(raw_settings, dict):
+        raise ValueError("Each entry inside 'sensor_noise' must be an object.")
+
+    normalized = {}
+    for key, value in raw_settings.items():
+        if key.startswith("_"):
+            continue
+        canonical_key = alias_map.get(key, key)
+        normalized[canonical_key] = value
+    return normalized
+
+
+def update_named_block_fields(world_text, node_name, field_updates, apply_to_all):
+    """
+    Atualiza campos de um bloco VRML/Webots por nome do nó.
+    """
+    pattern = re.compile(
+        rf"(?P<indent>^[ \t]*){re.escape(node_name)} \{{\n(?P<body>.*?)(?P=indent)\}}",
+        re.MULTILINE | re.DOTALL,
+    )
+
+    matches = list(pattern.finditer(world_text))
+    if not matches:
+        print(f"Warning: node '{node_name}' was not found while applying sensor noise.")
+        return world_text
+
+    def replace_match(match):
+        indent = match.group("indent")
+        body = match.group("body")
+        updated_body = update_block_body(body, field_updates, indent + "  ")
+        return f"{indent}{node_name} {{\n{updated_body}{indent}}}"
+
+    if apply_to_all:
+        return pattern.sub(replace_match, world_text)
+    return pattern.sub(replace_match, world_text, count=1)
+
+
+def update_block_body(body, field_updates, field_indent):
+    lines = body.splitlines()
+    rendered_fields = {
+        field_name: render_wbt_field(field_name, value, field_indent)
+        for field_name, value in field_updates.items()
+    }
+
+    updated_lines = []
+    replaced_fields = set()
+    index = 0
+
+    while index < len(lines):
+        stripped_line = lines[index].strip()
+        field_name = next(
+            (
+                candidate
+                for candidate in rendered_fields
+                if stripped_line == candidate
+                or stripped_line.startswith(candidate + " ")
+                or stripped_line.startswith(candidate + "[")
+            ),
+            None,
+        )
+
+        if field_name is None:
+            updated_lines.append(lines[index])
+            index += 1
+            continue
+
+        updated_lines.extend(rendered_fields[field_name])
+        replaced_fields.add(field_name)
+
+        if stripped_line.startswith(field_name) and stripped_line.endswith("["):
+            index += 1
+            while index < len(lines) and lines[index].strip() != "]":
+                index += 1
+            if index < len(lines):
+                index += 1
+            continue
+
+        index += 1
+
+    for field_name, rendered_lines in rendered_fields.items():
+        if field_name not in replaced_fields:
+            if updated_lines and updated_lines[-1].strip():
+                updated_lines.append("")
+            updated_lines.extend(rendered_lines)
+
+    if updated_lines:
+        return "\n".join(updated_lines) + "\n"
+    return ""
+
+
+def render_wbt_field(field_name, value, field_indent):
+    if field_name == "lookupTable":
+        if not isinstance(value, list) or not value:
+            raise ValueError("lookupTable must be a non-empty list of [x, y, noise] entries.")
+
+        rendered = [f"{field_indent}{field_name} ["]
+        for row in value:
+            if not isinstance(row, (list, tuple)) or len(row) != 3:
+                raise ValueError("Each lookupTable row must have exactly 3 values.")
+            rendered.append(
+                f"{field_indent}  "
+                f"{format_wbt_value(row[0])} {format_wbt_value(row[1])} {format_wbt_value(row[2])}"
+            )
+        rendered.append(f"{field_indent}]")
+        return rendered
+
+    return [f"{field_indent}{field_name} {format_wbt_value(value)}"]
+
+
+def format_wbt_value(value):
+    if isinstance(value, bool):
+        return "TRUE" if value else "FALSE"
+
+    if isinstance(value, (int, float)):
+        return f"{value:.15g}"
+
+    if isinstance(value, str):
+        stripped_value = value.strip()
+        if stripped_value.upper() in {"TRUE", "FALSE"}:
+            return stripped_value.upper()
+        try:
+            return f"{int(stripped_value)}"
+        except ValueError:
+            try:
+                return f"{float(stripped_value):.15g}"
+            except ValueError:
+                escaped_value = stripped_value.replace('"', '\\"')
+                return f'"{escaped_value}"'
+
+    raise ValueError(f"Unsupported value type for WBT serialization: {type(value)!r}")
+
+
 # =============================================================================
 # 3) MAIN
 #
@@ -133,7 +432,9 @@ if __name__ == "__main__":
     # -------------------------------------------------------------------------
     # Leitura do arquivo JSON com todos os setups
     # -------------------------------------------------------------------------
-    with open('simulationSetup.json', 'r') as arquivo:
+    simulation_setup_file = os.environ.get("SIMULATION_SETUP_FILE", "simulationSetup.json")
+
+    with open(simulation_setup_file, 'r') as arquivo:
         simulation_setup = json.load(arquivo)
 
     # -------------------------------------------------------------------------
@@ -150,6 +451,8 @@ if __name__ == "__main__":
         environment_file = actual_setup["environment"]
         path_to_save_simulation_files = actual_setup["path_to_save_simulation_files"]
         metaheuristic_runner_path = actual_setup["metaheuristic_runner_path"]
+        sensor_noise = parse_optional_noise_config(actual_setup)
+        noise_name_suffix = parse_optional_noise_label(actual_setup, sensor_noise)
 
         simulation_repeat = int(actual_setup["simulation_repeat"])
         simulation_time = float(actual_setup["average_time_in_each_simulation"])
@@ -172,7 +475,8 @@ if __name__ == "__main__":
                 metaheuristic + "-P" + str(population_size) +
                 "-G" + str(max_generations) +
                 "-C" + str(self_adjustment_weight) +
-                "-S" + str(social_adjustment_weight) + "/"
+                "-S" + str(social_adjustment_weight) +
+                noise_name_suffix + "/"
             )
 
         elif metaheuristic == "GA":
@@ -186,7 +490,8 @@ if __name__ == "__main__":
                 metaheuristic + "-P" + str(population_size) +
                 "-G" + str(max_generations) +
                 "-E" + str(elite_count) +
-                "-C" + str(crossover_fraction) + "/"
+                "-C" + str(crossover_fraction) +
+                noise_name_suffix + "/"
             )
 
         elif metaheuristic == "WOA":
@@ -198,7 +503,8 @@ if __name__ == "__main__":
                 os.path.splitext(os.path.basename(environment_file))[0] + "-" +
                 metaheuristic + "-P" + str(population_size) +
                 "-G" + str(max_generations) +
-                "-SC" + str(spiral_coefficient) + "/"
+                "-SC" + str(spiral_coefficient) +
+                noise_name_suffix + "/"
             )
 
         elif metaheuristic == "BA":
@@ -214,7 +520,8 @@ if __name__ == "__main__":
                 os.path.splitext(os.path.basename(environment_file))[0] + "-" +
                 metaheuristic + "-P" + str(nScoutBees) +
                 "-G" + str(max_generations) +
-                "-NR" + str(neighborhood_radius) + "/"
+                "-NR" + str(neighborhood_radius) +
+                noise_name_suffix + "/"
             )
 
         elif metaheuristic == "DE":
@@ -228,7 +535,8 @@ if __name__ == "__main__":
                 metaheuristic + "-P" + str(population_size) +
                 "-G" + str(max_generations) +
                 "-F" + str(F) +
-                "-CR" + str(CR) + "/"
+                "-CR" + str(CR) +
+                noise_name_suffix + "/"
             )
 
         else:
@@ -270,6 +578,9 @@ if __name__ == "__main__":
 
             processo_webots = None
             control_program_process = None
+            runtime_environment_file = environment_file
+            original_environment_contents = None
+            diagnostics_enabled = os.environ.get("SIMULATION_DIAGNOSTIC_LOGS", "").strip().lower() in {"1", "true", "yes", "on"}
 
             # flags de término (para log e debug)
             ended_by_timeout = False
@@ -285,8 +596,21 @@ if __name__ == "__main__":
 
                 time.sleep(1)
 
-                webots_command = ["xvfb-run", "-a", "webots", "--batch", "--no-rendering" ,  "--minimize", "--mode=fast" , environment_file] #, , , "--no-rendering" ,  "--minimize"
-                processo_webots = start_process(webots_command, env=env)
+                runtime_environment_file, original_environment_contents = prepare_environment_with_noise(
+                    environment_file,
+                    destination_folder,
+                    sensor_noise,
+                )
+
+                webots_command = ["xvfb-run", "-a", "webots", "--batch", "--no-rendering" ,  "--minimize", "--mode=fast" , runtime_environment_file] #, , , "--no-rendering" ,  "--minimize"
+                webots_stdout_path = os.path.join(destination_folder, "webots_stdout.log") if diagnostics_enabled else None
+                webots_stderr_path = os.path.join(destination_folder, "webots_stderr.log") if diagnostics_enabled else None
+                processo_webots = start_process(
+                    webots_command,
+                    env=env,
+                    stdout_path=webots_stdout_path,
+                    stderr_path=webots_stderr_path,
+                )
 
                 time.sleep(Webots_initiation_time)
                 print("Webots has been started.")
@@ -358,7 +682,13 @@ if __name__ == "__main__":
                 else:
                     raise RuntimeError("Metaheuristic not implemented for control_command.")
 
-                control_program_process = start_process(control_command)
+                control_stdout_path = os.path.join(destination_folder, "control_program_stdout.log") if diagnostics_enabled else None
+                control_stderr_path = os.path.join(destination_folder, "control_program_stderr.log") if diagnostics_enabled else None
+                control_program_process = start_process(
+                    control_command,
+                    stdout_path=control_stdout_path,
+                    stderr_path=control_stderr_path,
+                )
 
                 print("work_path")
                 print(work_path)
@@ -412,6 +742,7 @@ if __name__ == "__main__":
                 # =============================================================
                 terminate_process_tree(control_program_process, timeout_s=25)
                 terminate_process_tree(processo_webots, timeout_s=25)
+                restore_file_contents(environment_file, original_environment_contents)
 
                 # Fallback para controller específico (caso raro fique órfão)
                 project_root = os.path.dirname(os.path.abspath(__file__))

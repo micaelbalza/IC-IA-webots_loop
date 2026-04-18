@@ -1,70 +1,185 @@
-{
-        "metaheuristic": "GA",
-            "population_size": "30",
-            "max_generations": "30",
-            "elite_count": "2",
-            "crossover_fraction": "0.8",
-            
-            "robot_radius": "0.15",
-            "alpha": "1.4",
-            
-            "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/SX.wbt",
-            "metaheuristic_runner_path": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
-            "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/simulation_results/",
-            "end_point_x": "4.0",
-            "end_point_y": "4.0",
-            
-            "simulation_repeat": "5",
-            "average_time_in_each_simulation": "160",
-            "webots_initiation_time": "15",
-            "control_program_initiation_time": "20"
-    },
-    
-    
-{
-        "metaheuristic": "PSO",
-            "population_size": "30",
-            "max_generations": "30",
-            "self_adjustment_weight": "1.5",
-            "social_adjustment_weight": "1",
-            
-            "robot_radius": "0.15",
-            "alpha": "1.4",
-            
-            "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/SX.wbt",
-            "metaheuristic_runner_path": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
-            "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/simulation_results/",
-            "end_point_x": "4.0",
-            "end_point_y": "4.0",
-            
-            "simulation_repeat": "5",
-            "average_time_in_each_simulation": "160",
-            "webots_initiation_time": "15",
-            "control_program_initiation_time": "20"
-    },
-    
-    
-    
-    
-    
- {
-        "metaheuristic": "PSO",
-            "population_size": "30",
-            "max_generations": "10",
-            "self_adjustment_weight": "1",
-            "social_adjustment_weight": "1.5",
-            
-            "robot_radius": "0.15",
-            "alpha": "1.4",
-            
-            "environment": "/home/micaelbalza/Desktop/IC-IA-webots_loop/worlds/AMB_06.wbt",
-            "metaheuristic_runner_path": "/home/micaelbalza/Desktop/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
-            "path_to_save_simulation_files": "/home/micaelbalza/Desktop/IC-IA-webots_loop/simulation_results/",
-            "end_point_x": "2.0",
-            "end_point_y": "0.0",
-            
-            "simulation_repeat": "60",
-            "average_time_in_each_simulation": "160",
-            "webots_initiation_time": "15",
-            "control_program_initiation_time": "20"
-    },
+simulationSetup.json does not support comments because it is parsed as standard JSON.
+
+If you want explanations, ranges and examples, use this file as reference and keep
+the actual simulationSetup.json clean.
+
+===========================================================================
+BASE EXAMPLE
+===========================================================================
+
+[
+  {
+    "metaheuristic": "DE",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "6",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "population_size": "20",
+    "max_generations": "30",
+    "F": "0.6",
+    "CR": "0.9",
+    "sensor_noise_label": "NOISE-SET-1"
+  }
+]
+
+===========================================================================
+OPTIONAL SENSOR NOISE BLOCK
+===========================================================================
+
+You can add an optional "sensor_noise" object inside each setup.
+
+Example:
+
+[
+  {
+    "metaheuristic": "DE",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "6",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "population_size": "20",
+    "max_generations": "30",
+    "F": "0.6",
+    "CR": "0.9",
+    "sensor_noise_label": "NOISE-SET-1",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.3,
+        "noiseCorrelation": 0.7,
+        "speedNoise": 0.1
+      },
+      "compass": {
+        "lookupTable": [
+          [0, 0, 0.01],
+          [1, 1, 0.01]
+        ]
+      },
+      "distance_sensor": {
+        "lookupTable": [
+          [0.0, 0.0, 0.0],
+          [3.0, 3.0, 0.05]
+        ]
+      }
+    }
+  }
+]
+
+===========================================================================
+SUPPORTED FIELDS
+===========================================================================
+
+sensor_noise.world_random_seed
+- Optional
+- Sets WorldInfo.randomSeed in the temporary .wbt generated for that run
+- Useful for reproducible sensor noise
+
+sensor_noise_label
+- Optional
+- Appends a suffix to the experiment folder name
+- Useful to avoid collisions with no-noise runs
+- Example:
+  "sensor_noise_label": "NOISE-SET-1"
+
+sensor_noise.gps
+- Optional
+- Applied to the first GPS node found in the world
+- Supported keys:
+  accuracy
+  noiseCorrelation
+  noise_correlation
+  resolution
+  speedNoise
+  speed_noise
+  speedResolution
+  speed_resolution
+
+Recommended starting values for GPS:
+- accuracy: 0.3 to 1.0
+- noiseCorrelation: 0.6 to 0.85
+- speedNoise: 0.05 to 0.2
+
+sensor_noise.compass
+- Optional
+- Applied to the first Compass node found in the world
+- Supported keys:
+  lookupTable
+  lookup_table
+  resolution
+  xAxis / x_axis
+  yAxis / y_axis
+  zAxis / z_axis
+
+Recommended starting value for Compass noise:
+- lookupTable with noise around 0.005 to 0.02
+
+Example:
+"compass": {
+  "lookupTable": [
+    [0, 0, 0.01],
+    [1, 1, 0.01]
+  ]
+}
+
+sensor_noise.distance_sensor
+- Optional
+- Applied to all DistanceSensor nodes found in the world
+- Supported keys:
+  lookupTable
+  lookup_table
+  resolution
+  aperture
+  gaussianWidth
+  gaussian_width
+  type
+  redColorSensitivity
+  red_color_sensitivity
+
+Recommended starting strategy for distance sensors:
+- keep low noise close to the robot
+- increase noise at larger distances
+
+Example:
+"distance_sensor": {
+  "lookupTable": [
+    [0.0, 0.0, 0.0],
+    [0.1, 0.1, 0.01],
+    [1.0, 1.0, 0.03],
+    [3.0, 3.0, 0.05]
+  ]
+}
+
+===========================================================================
+IMPORTANT NOTES
+===========================================================================
+
+- The original .wbt world is not modified.
+- Simulation_loop.py saves a trace copy of the noise-injected world inside the
+  simulation folder and restores the original .wbt after the run ends.
+- During execution, the launcher applies the requested noise to the selected
+  world before starting Webots and guarantees restoration in the cleanup step.
+- This works in the Docker/container flow as well, because the world patching
+  happens inside the simulator launcher before Webots starts.
+- Keys starting with "_" inside sensor_noise blocks are ignored, so you may use
+  them as human notes if desired.
+- For validation or custom runs, the launcher also accepts the environment
+  variable SIMULATION_SETUP_FILE. If it is not provided, it defaults to
+  simulationSetup.json.
+- In practice, Compass noise can significantly disturb the current controller
+  loop. The active setup validated in this repository uses DistanceSensor noise
+  (and optional world_random_seed) as the stable default, while GPS and Compass
+  noise remain supported as optional fields for future experiments.
