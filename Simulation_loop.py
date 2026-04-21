@@ -238,6 +238,8 @@ def prepare_environment_with_noise(environment_file, destination_folder, sensor_
         },
     )
     if compass_settings:
+        if "lookupTable" in compass_settings:
+            compass_settings["lookupTable"] = normalize_compass_lookup_table(compass_settings["lookupTable"])
         world_text = update_named_block_fields(world_text, "Compass", compass_settings, apply_to_all=False)
 
     distance_sensor_settings = normalize_noise_fields(
@@ -286,6 +288,42 @@ def normalize_noise_fields(raw_settings, alias_map):
         canonical_key = alias_map.get(key, key)
         normalized[canonical_key] = value
     return normalized
+
+
+def normalize_compass_lookup_table(lookup_table):
+    """
+    Normaliza tabelas do Compass para preservar a identidade do sensor.
+
+    O controlador usa wb_compass_get_values() diretamente e espera componentes
+    em torno de [-1, 1]. Uma tabela simplificada 0..1 altera a resposta do
+    sensor mesmo com ruído zero. Quando detectamos esse shorthand, expandimos
+    para uma identidade simétrica em [-1, 1].
+    """
+    if not isinstance(lookup_table, list) or not lookup_table:
+        raise ValueError("Compass lookupTable must be a non-empty list of [x, y, noise] entries.")
+
+    normalized_rows = []
+    for row in lookup_table:
+        if not isinstance(row, (list, tuple)) or len(row) != 3:
+            raise ValueError("Each Compass lookupTable row must have exactly 3 values.")
+        normalized_rows.append([float(row[0]), float(row[1]), float(row[2])])
+
+    identity_like_rows = all(abs(row[0] - row[1]) < 1e-9 for row in normalized_rows)
+    if not identity_like_rows:
+        return normalized_rows
+
+    xs = [row[0] for row in normalized_rows]
+    if min(xs) < 0.0 or max(xs) > 1.0:
+        return normalized_rows
+
+    noise_at_zero = next((row[2] for row in normalized_rows if abs(row[0]) < 1e-9), normalized_rows[0][2])
+    noise_at_one = next((row[2] for row in normalized_rows if abs(row[0] - 1.0) < 1e-9), normalized_rows[-1][2])
+
+    return [
+        [-1.0, -1.0, noise_at_one],
+        [0.0, 0.0, noise_at_zero],
+        [1.0, 1.0, noise_at_one],
+    ]
 
 
 def update_named_block_fields(world_text, node_name, field_updates, apply_to_all):

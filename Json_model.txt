@@ -130,10 +130,18 @@ Recommended starting value for Compass noise:
 Example:
 "compass": {
   "lookupTable": [
+    [-1, -1, 0.01],
     [0, 0, 0.01],
     [1, 1, 0.01]
   ]
 }
+
+Important for Compass:
+- The controller reads wb_compass_get_values() directly and uses components that
+  can be negative.
+- A lookupTable defined only in the range 0..1 can distort the heading even
+  when the noise column is zero.
+- If you want an identity mapping with noise, use a symmetric table in [-1, 1].
 
 sensor_noise.distance_sensor
 - Optional
