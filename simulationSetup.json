@@ -1,62 +1,1400 @@
 [
   {
-    "metaheuristic": "DE",
+    "metaheuristic": "GA",
     "robot_radius": "0.15",
     "alpha": "1.4",
     "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
     "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
-    "simulation_repeat": "6",
+    "simulation_repeat": "60",
     "average_time_in_each_simulation": "160",
     "webots_initiation_time": "15",
     "control_program_initiation_time": "20",
     "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
     "end_point_x": "4.0",
     "end_point_y": "4.0",
+    "elite_count": "1",
     "population_size": "20",
     "max_generations": "30",
-    "F": "0.6",
-    "CR": "0.9",
-    "sensor_noise_label": "NOISE-V1",
-    "sensor_noise": {
-      "world_random_seed": 42,
-      "distance_sensor": {
-        "lookupTable": [
-          [0.0, 0.0, 0.0],
-          [0.1, 0.1, 0.01],
-          [1.5, 1.5, 0.03],
-          [3.0, 3.0, 0.05]
-        ]
-      }
-    }
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "NO-NOISE"
   },
-
-    {
-    "metaheuristic": "DE",
+  {
+    "metaheuristic": "GA",
     "robot_radius": "0.15",
     "alpha": "1.4",
     "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
     "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
-    "simulation_repeat": "6",
+    "simulation_repeat": "60",
     "average_time_in_each_simulation": "160",
     "webots_initiation_time": "15",
     "control_program_initiation_time": "20",
-    "environment": "/home/simulator/IC-IA-webots_loop/worlds/Comparisons - article 1.wbt",
-    "end_point_x": "9.5",
-    "end_point_y": "9.5",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
     "population_size": "20",
     "max_generations": "30",
-    "F": "0.8",
-    "CR": "0.9",
-    "sensor_noise_label": "NOISE-V1",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "GPS-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.01,
+        "noiseCorrelation": 0.2,
+        "speedNoise": 0.005
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "COMPASS-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.003], [0, 0, 0.003], [1, 1, 0.003]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "DISTANCE-LOW",
     "sensor_noise": {
       "world_random_seed": 42,
       "distance_sensor": {
-        "lookupTable": [
-          [0.0, 0.0, 0.0],
-          [0.1, 0.1, 0.01],
-          [1.5, 1.5, 0.03],
-          [3.0, 3.0, 0.05]
-        ]
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.005], [1.5, 1.5, 0.015], [3.0, 3.0, 0.025]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "ALL-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.01,
+        "noiseCorrelation": 0.2,
+        "speedNoise": 0.005
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.003], [0, 0, 0.003], [1, 1, 0.003]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.005], [1.5, 1.5, 0.015], [3.0, 3.0, 0.025]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "GPS-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.03,
+        "noiseCorrelation": 0.35,
+        "speedNoise": 0.01
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "COMPASS-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.008], [0, 0, 0.008], [1, 1, 0.008]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "DISTANCE-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.01], [1.5, 1.5, 0.03], [3.0, 3.0, 0.05]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "ALL-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.03,
+        "noiseCorrelation": 0.35,
+        "speedNoise": 0.01
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.008], [0, 0, 0.008], [1, 1, 0.008]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.01], [1.5, 1.5, 0.03], [3.0, 3.0, 0.05]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "GPS-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.06,
+        "noiseCorrelation": 0.5,
+        "speedNoise": 0.02
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "COMPASS-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.015], [0, 0, 0.015], [1, 1, 0.015]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "DISTANCE-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.02], [1.5, 1.5, 0.05], [3.0, 3.0, 0.08]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "ALL-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.06,
+        "noiseCorrelation": 0.5,
+        "speedNoise": 0.02
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.015], [0, 0, 0.015], [1, 1, 0.015]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.02], [1.5, 1.5, 0.05], [3.0, 3.0, 0.08]]
+      }
+    }
+  },
+
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "NO-NOISE"
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "GPS-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.01,
+        "noiseCorrelation": 0.2,
+        "speedNoise": 0.005
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "COMPASS-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.003], [0, 0, 0.003], [1, 1, 0.003]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "DISTANCE-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.005], [1.5, 1.5, 0.015], [3.0, 3.0, 0.025]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "ALL-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.01,
+        "noiseCorrelation": 0.2,
+        "speedNoise": 0.005
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.003], [0, 0, 0.003], [1, 1, 0.003]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.005], [1.5, 1.5, 0.015], [3.0, 3.0, 0.025]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "GPS-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.03,
+        "noiseCorrelation": 0.35,
+        "speedNoise": 0.01
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "COMPASS-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.008], [0, 0, 0.008], [1, 1, 0.008]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "DISTANCE-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.01], [1.5, 1.5, 0.03], [3.0, 3.0, 0.05]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "ALL-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.03,
+        "noiseCorrelation": 0.35,
+        "speedNoise": 0.01
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.008], [0, 0, 0.008], [1, 1, 0.008]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.01], [1.5, 1.5, 0.03], [3.0, 3.0, 0.05]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "GPS-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.06,
+        "noiseCorrelation": 0.5,
+        "speedNoise": 0.02
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "COMPASS-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.015], [0, 0, 0.015], [1, 1, 0.015]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "DISTANCE-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.02], [1.5, 1.5, 0.05], [3.0, 3.0, 0.08]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "20",
+    "max_generations": "30",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "ALL-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.06,
+        "noiseCorrelation": 0.5,
+        "speedNoise": 0.02
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.015], [0, 0, 0.015], [1, 1, 0.015]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.02], [1.5, 1.5, 0.05], [3.0, 3.0, 0.08]]
+      }
+    }
+  },
+
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "NO-NOISE"
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "GPS-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.01,
+        "noiseCorrelation": 0.2,
+        "speedNoise": 0.005
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "COMPASS-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.003], [0, 0, 0.003], [1, 1, 0.003]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "DISTANCE-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.005], [1.5, 1.5, 0.015], [3.0, 3.0, 0.025]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "ALL-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.01,
+        "noiseCorrelation": 0.2,
+        "speedNoise": 0.005
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.003], [0, 0, 0.003], [1, 1, 0.003]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.005], [1.5, 1.5, 0.015], [3.0, 3.0, 0.025]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "GPS-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.03,
+        "noiseCorrelation": 0.35,
+        "speedNoise": 0.01
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "COMPASS-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.008], [0, 0, 0.008], [1, 1, 0.008]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "DISTANCE-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.01], [1.5, 1.5, 0.03], [3.0, 3.0, 0.05]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "ALL-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.03,
+        "noiseCorrelation": 0.35,
+        "speedNoise": 0.01
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.008], [0, 0, 0.008], [1, 1, 0.008]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.01], [1.5, 1.5, 0.03], [3.0, 3.0, 0.05]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "GPS-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.06,
+        "noiseCorrelation": 0.5,
+        "speedNoise": 0.02
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "COMPASS-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.015], [0, 0, 0.015], [1, 1, 0.015]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "DISTANCE-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.02], [1.5, 1.5, 0.05], [3.0, 3.0, 0.08]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.50",
+    "sensor_noise_label": "ALL-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.06,
+        "noiseCorrelation": 0.5,
+        "speedNoise": 0.02
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.015], [0, 0, 0.015], [1, 1, 0.015]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.02], [1.5, 1.5, 0.05], [3.0, 3.0, 0.08]]
+      }
+    }
+  },
+
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "NO-NOISE"
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "GPS-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.01,
+        "noiseCorrelation": 0.2,
+        "speedNoise": 0.005
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "COMPASS-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.003], [0, 0, 0.003], [1, 1, 0.003]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "DISTANCE-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.005], [1.5, 1.5, 0.015], [3.0, 3.0, 0.025]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "ALL-LOW",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.01,
+        "noiseCorrelation": 0.2,
+        "speedNoise": 0.005
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.003], [0, 0, 0.003], [1, 1, 0.003]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.005], [1.5, 1.5, 0.015], [3.0, 3.0, 0.025]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "GPS-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.03,
+        "noiseCorrelation": 0.35,
+        "speedNoise": 0.01
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "COMPASS-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.008], [0, 0, 0.008], [1, 1, 0.008]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "DISTANCE-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.01], [1.5, 1.5, 0.03], [3.0, 3.0, 0.05]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "ALL-MEDIUM",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.03,
+        "noiseCorrelation": 0.35,
+        "speedNoise": 0.01
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.008], [0, 0, 0.008], [1, 1, 0.008]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.01], [1.5, 1.5, 0.03], [3.0, 3.0, 0.05]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "GPS-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.06,
+        "noiseCorrelation": 0.5,
+        "speedNoise": 0.02
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "COMPASS-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "compass": {
+        "lookupTable": [[-1, -1, 0.015], [0, 0, 0.015], [1, 1, 0.015]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "DISTANCE-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.02], [1.5, 1.5, 0.05], [3.0, 3.0, 0.08]]
+      }
+    }
+  },
+  {
+    "metaheuristic": "GA",
+    "robot_radius": "0.15",
+    "alpha": "1.4",
+    "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
+    "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
+    "simulation_repeat": "60",
+    "average_time_in_each_simulation": "160",
+    "webots_initiation_time": "15",
+    "control_program_initiation_time": "20",
+    "environment": "/home/simulator/IC-IA-webots_loop/worlds/AMB_04.wbt",
+    "end_point_x": "4.0",
+    "end_point_y": "4.0",
+    "elite_count": "1",
+    "population_size": "30",
+    "max_generations": "10",
+    "crossover_fraction": "0.70",
+    "sensor_noise_label": "ALL-HIGH",
+    "sensor_noise": {
+      "world_random_seed": 42,
+      "gps": {
+        "accuracy": 0.06,
+        "noiseCorrelation": 0.5,
+        "speedNoise": 0.02
+      },
+      "compass": {
+        "lookupTable": [[-1, -1, 0.015], [0, 0, 0.015], [1, 1, 0.015]]
+      },
+      "distance_sensor": {
+        "lookupTable": [[0.0, 0.0, 0.0], [0.1, 0.1, 0.02], [1.5, 1.5, 0.05], [3.0, 3.0, 0.08]]
       }
     }
   }
