@@ -3,6 +3,11 @@ simulationSetup.json does not support comments because it is parsed as standard 
 If you want explanations, ranges and examples, use this file as reference and keep
 the actual simulationSetup.json clean.
 
+Important:
+- simulation_repeat now means the number of VALID simulations you want to keep.
+- Failed attempts do not consume a valid slot.
+- Failed attempts are saved under failed_simulations/ inside that experiment folder.
+
 ===========================================================================
 BASE EXAMPLE
 ===========================================================================
@@ -191,3 +196,9 @@ IMPORTANT NOTES
   loop. The active setup validated in this repository uses DistanceSensor noise
   (and optional world_random_seed) as the stable default, while GPS and Compass
   noise remain supported as optional fields for future experiments.
+- The experiment root stores only the valid simulations using folders like 01,
+  02, 03, ...
+- Failed attempts are moved to failed_simulations/ with labels such as
+  attempt_0007__TIMEOUT or attempt_0014__ERROR_rc1.
+- The summary log reports how many attempts were needed to obtain the requested
+  number of valid simulations.

@@ -60,7 +60,8 @@ Antes de começar, certifique-se de ter os seguintes softwares instalados:
 2. O programa irá:
    - Ler as configurações do arquivo `simulationSetup.json`.
    - Configurar e iniciar as simulações no **Webots**.
-   - Salvar os resultados em um diretório específico.
+   - Continuar tentando até obter a quantidade de simulações válidas definida em `simulation_repeat`.
+   - Salvar as válidas no diretório principal do experimento e mover as inválidas para `failed_simulations/`.
 
 Para executar em container Docker, consulte [DOCKER.md](DOCKER.md).
 
@@ -72,6 +73,7 @@ Os resultados das simulações serão salvos em um diretório configurado no JSO
 - **Relatórios de Desempenho**: Métricas como tempo de navegação, distância percorrida e numero de paradas...  
 - **Dados Brutos**: Logs detalhados de cada simulação.  
 - **Gráficos**: Visualizações geradas com base nos resultados.
+- **Falhas Separadas**: Tentativas inválidas ficam em `failed_simulations/` dentro do experimento.
 
 ---
 

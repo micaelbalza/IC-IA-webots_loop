@@ -4,6 +4,7 @@ import time
 import json
 import signal
 import re
+import shutil
 from typing import Optional
 
 
@@ -131,6 +132,20 @@ def clean_folder(caminho_pasta):
                 os.unlink(arquivo_path)
         except Exception as e:
             print(f"Erro ao excluir {arquivo_path}: {e}")
+
+
+def move_directory(source_directory, destination_directory):
+    if os.path.exists(destination_directory):
+        raise FileExistsError(f"Destination directory already exists: {destination_directory}")
+    shutil.move(source_directory, destination_directory)
+
+
+def remove_empty_directory(directory_path):
+    try:
+        if os.path.isdir(directory_path) and not os.listdir(directory_path):
+            os.rmdir(directory_path)
+    except OSError:
+        pass
 
 
 def safe_remove_file(file_path):
@@ -587,27 +602,34 @@ if __name__ == "__main__":
             continue
 
         # ------------------------- contadores para log ------------------------
+        simulation_root = os.path.join(path_to_save_simulation_files, simulation_name)
+        failed_simulations_root = os.path.join(simulation_root, "failed_simulations")
+        staging_root = os.path.join(simulation_root, ".attempts")
+        valid_index_width = max(2, len(str(simulation_repeat)))
+
+        total_attempts = 0
+        valid_simulations_count = 0
+        failed_simulations_count = 0
         time_limit_count = 0
         process_termination_count = 0
         simulations_time_limit = []
         simulations_process_termination = []
         simulations_control_program_success = []
         simulations_control_program_error = []
+        successful_simulations = []
+        failed_simulations = []
 
         # ---------------------------------------------------------------------
-        # Loop de repetições
+        # Loop de tentativas até atingir o número de simulações válidas
         # ---------------------------------------------------------------------
-        for current_simulation_number in range(1, simulation_repeat + 1):
+        while valid_simulations_count < simulation_repeat:
 
-            current_simulation_number_str = str(current_simulation_number).zfill(2)
+            total_attempts += 1
+            attempt_label = f"attempt_{str(total_attempts).zfill(4)}"
+            valid_simulation_label = str(valid_simulations_count + 1).zfill(valid_index_width)
 
-            destination_folder = (
-                path_to_save_simulation_files +
-                simulation_name +
-                current_simulation_number_str + "/"
-            )
+            destination_folder = os.path.join(staging_root, attempt_label) + "/"
 
-            # Preparar pastas desta repetição
             os.makedirs(destination_folder, exist_ok=True)
             clean_folder(destination_folder)
 
@@ -620,14 +642,11 @@ if __name__ == "__main__":
             original_environment_contents = None
             diagnostics_enabled = os.environ.get("SIMULATION_DIAGNOSTIC_LOGS", "").strip().lower() in {"1", "true", "yes", "on"}
 
-            # flags de término (para log e debug)
             ended_by_timeout = False
             control_program_returncode = None
+            simulation_is_valid = False
 
             try:
-                # =============================================================
-                # A) Inicia Webots
-                # =============================================================
                 env = os.environ.copy()
                 env["DESTINATION_FOLDER"] = destination_folder
                 env["END_POINT"] = f"{end_point_x},{end_point_y}"
@@ -640,7 +659,7 @@ if __name__ == "__main__":
                     sensor_noise,
                 )
 
-                webots_command = ["xvfb-run", "-a", "webots", "--batch", "--no-rendering" ,  "--minimize", "--mode=fast" , runtime_environment_file] #, , , "--no-rendering" ,  "--minimize"
+                webots_command = ["xvfb-run", "-a", "webots", "--batch", "--no-rendering" ,  "--minimize", "--mode=fast" , runtime_environment_file]
                 webots_stdout_path = os.path.join(destination_folder, "webots_stdout.log") if diagnostics_enabled else None
                 webots_stderr_path = os.path.join(destination_folder, "webots_stderr.log") if diagnostics_enabled else None
                 processo_webots = start_process(
@@ -653,11 +672,7 @@ if __name__ == "__main__":
                 time.sleep(Webots_initiation_time)
                 print("Webots has been started.")
 
-                # =============================================================
-                # B) Inicia o programa de controle
-                # =============================================================
                 work_path = destination_folder
-
                 python_control_program = metaheuristic_runner_path
 
                 if metaheuristic == 'PSO':
@@ -730,59 +745,43 @@ if __name__ == "__main__":
 
                 print("work_path")
                 print(work_path)
-                
-                time.sleep(60) # 5
 
+                time.sleep(60)
                 time.sleep(control_program_initiation_time)
                 print("Python control program has been started.")
 
-                # =============================================================
-                # C) Aguarda finalizar por PROGRAMA DE CONTROLE ENCERRAR ou TIMEOUT
-                #
-                # Correção importante:
-                # - Se o programa de controle terminar, nós SAÍMOS do loop (break) imediatamente.
-                # - Isso evita que "dê timeout" mesmo quando a simulação concluiu.
-                # =============================================================
                 t0 = time.time()
 
                 while True:
-                    # 1) Checar se o programa de controle terminou
                     control_program_returncode = control_program_process.poll()
                     if control_program_returncode is not None:
                         process_termination_count += 1
-                        simulations_process_termination.append(current_simulation_number_str)
+                        simulations_process_termination.append(attempt_label)
 
                         if control_program_returncode == 0:
-                            simulations_control_program_success.append(current_simulation_number_str)
+                            simulations_control_program_success.append(attempt_label)
+                            simulation_is_valid = True
                             print("Control program terminou com sucesso (returncode=0).")
                         else:
-                            simulations_control_program_error.append(current_simulation_number_str)
+                            simulations_control_program_error.append(attempt_label)
                             print(f"Control program terminou com erro (returncode={control_program_returncode}).")
                         break
 
-                    # 2) Checar timeout
                     if time.time() - t0 > simulation_time:
                         ended_by_timeout = True
                         time_limit_count += 1
-                        simulations_time_limit.append(current_simulation_number_str)
+                        simulations_time_limit.append(attempt_label)
                         print("Timeout has been reached")
                         break
 
                     time.sleep(0.2)
-                time.sleep(60) # 5
+                time.sleep(60)
 
             finally:
-                # =============================================================
-                # D) Encerramento garantido (SEMPRE)
-                # - Mesmo se o programa de controle terminou sozinho (sucesso/erro),
-                #   ainda garantimos que Webots e filhos sejam encerrados.
-                # - Se deu timeout, este bloco é o responsável por matar tudo.
-                # =============================================================
                 terminate_process_tree(control_program_process, timeout_s=25)
                 terminate_process_tree(processo_webots, timeout_s=25)
                 restore_file_contents(environment_file, original_environment_contents)
 
-                # Fallback para controller específico (caso raro fique órfão)
                 project_root = os.path.dirname(os.path.abspath(__file__))
                 controller_binary = os.path.join(
                     project_root,
@@ -796,14 +795,32 @@ if __name__ == "__main__":
                     stderr=subprocess.DEVNULL
                 )
 
-                # Mensagem final desta repetição
-                if ended_by_timeout:
-                    print(f"\n The simulation {simulation_name}{current_simulation_number_str} finished (TIMEOUT)\n")
+                if simulation_is_valid:
+                    final_destination_folder = os.path.join(simulation_root, valid_simulation_label)
+                    move_directory(destination_folder.rstrip("/"), final_destination_folder)
+                    valid_simulations_count += 1
+                    successful_simulations.append(f"{attempt_label} -> {valid_simulation_label}")
+                    print(f"\n Attempt {attempt_label} finished as VALID simulation {valid_simulation_label}\n")
                 else:
-                    # terminou pelo programa de controle encerrar
-                    print(f"\n The simulation {simulation_name}{current_simulation_number_str} finished (CONTROL_PROGRAM_END rc={control_program_returncode})\n")
+                    os.makedirs(failed_simulations_root, exist_ok=True)
+                    if ended_by_timeout:
+                        failed_label = f"{attempt_label}__TIMEOUT"
+                    elif control_program_returncode is None:
+                        failed_label = f"{attempt_label}__UNKNOWN"
+                    else:
+                        failed_label = f"{attempt_label}__ERROR_rc{control_program_returncode}"
 
-                # Mantido conforme solicitado
+                    final_destination_folder = os.path.join(failed_simulations_root, failed_label)
+                    move_directory(destination_folder.rstrip("/"), final_destination_folder)
+                    failed_simulations_count += 1
+                    failed_simulations.append(failed_label)
+
+                    if ended_by_timeout:
+                        print(f"\n Attempt {attempt_label} moved to failed_simulations as {failed_label}\n")
+                    else:
+                        print(f"\n Attempt {attempt_label} finished as INVALID simulation and was moved to failed_simulations/{failed_label}\n")
+
+                remove_empty_directory(staging_root)
                 time.sleep(130)
 
         # ---------------------------------------------------------------------
@@ -813,30 +830,52 @@ if __name__ == "__main__":
         with open(log_filename, "w") as log_file:
             log_file.write("=== SUMMARY ===\n\n")
 
-            log_file.write("Number of simulations terminated due to time limit (TIMEOUT): {}\n".format(time_limit_count))
-            log_file.write("Simulations terminated due to time limit (TIMEOUT):\n")
+            log_file.write("Requested number of valid simulations: {}\n".format(simulation_repeat))
+            log_file.write("Number of valid simulations obtained: {}\n".format(valid_simulations_count))
+            log_file.write("Total number of attempts: {}\n".format(total_attempts))
+            log_file.write("Number of failed attempts: {}\n".format(failed_simulations_count))
+            log_file.write("Failed attempts folder: {}\n".format(failed_simulations_root))
+
+            log_file.write("\n")
+
+            log_file.write("Valid simulations (attempt -> final folder):\n")
+            for sim in successful_simulations:
+                log_file.write(sim + "\n")
+
+            log_file.write("\n")
+
+            log_file.write("Failed attempts:\n")
+            for sim in failed_simulations:
+                log_file.write(sim + "\n")
+
+            log_file.write("\n")
+
+            log_file.write("Number of attempts terminated due to time limit (TIMEOUT): {}\n".format(time_limit_count))
+            log_file.write("Attempts terminated due to time limit (TIMEOUT):\n")
             for sim in simulations_time_limit:
                 log_file.write(sim + "\n")
 
             log_file.write("\n")
 
-            log_file.write("Number of simulations where control program ended: {}\n".format(process_termination_count))
-            log_file.write("Simulations where control program ended:\n")
+            log_file.write("Number of attempts where control program ended: {}\n".format(process_termination_count))
+            log_file.write("Attempts where control program ended:\n")
             for sim in simulations_process_termination:
                 log_file.write(sim + "\n")
 
             log_file.write("\n")
 
             log_file.write("Control program ended with SUCCESS (returncode=0): {}\n".format(len(simulations_control_program_success)))
-            log_file.write("Simulations with control program success:\n")
+            log_file.write("Attempts with control program success:\n")
             for sim in simulations_control_program_success:
                 log_file.write(sim + "\n")
 
             log_file.write("\n")
 
             log_file.write("Control program ended with ERROR (returncode!=0): {}\n".format(len(simulations_control_program_error)))
-            log_file.write("Simulations with control program error:\n")
+            log_file.write("Attempts with control program error:\n")
             for sim in simulations_control_program_error:
                 log_file.write(sim + "\n")
+
+        remove_empty_directory(staging_root)
 
     print("All simulations are over - the program has ended")
