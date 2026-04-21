@@ -746,7 +746,7 @@ if __name__ == "__main__":
                 print("work_path")
                 print(work_path)
 
-                time.sleep(60)
+                time.sleep(10)
                 time.sleep(control_program_initiation_time)
                 print("Python control program has been started.")
 
@@ -775,7 +775,7 @@ if __name__ == "__main__":
                         break
 
                     time.sleep(0.2)
-                time.sleep(60)
+                time.sleep(10)
 
             finally:
                 terminate_process_tree(control_program_process, timeout_s=25)
@@ -821,7 +821,7 @@ if __name__ == "__main__":
                         print(f"\n Attempt {attempt_label} finished as INVALID simulation and was moved to failed_simulations/{failed_label}\n")
 
                 remove_empty_directory(staging_root)
-                time.sleep(130)
+                time.sleep(10)
 
         # ---------------------------------------------------------------------
         # Escrita do log ao final deste setup
