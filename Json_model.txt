@@ -5,6 +5,7 @@ the actual simulationSetup.json clean.
 
 Important:
 - simulation_repeat now means the number of VALID simulations you want to keep.
+- max_attempts is an optional hard limit on the total number of attempts.
 - Failed attempts do not consume a valid slot.
 - Failed attempts are saved under failed_simulations/ inside that experiment folder.
 
@@ -20,6 +21,7 @@ BASE EXAMPLE
     "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
     "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
     "simulation_repeat": "6",
+    "max_attempts": "18",
     "average_time_in_each_simulation": "160",
     "webots_initiation_time": "15",
     "control_program_initiation_time": "20",
@@ -50,6 +52,7 @@ Example:
     "metaheuristic_runner_path": "/home/simulator/IC-IA-webots_loop/controllers/my_controller_Micael/python_runtime/control_program.py",
     "path_to_save_simulation_files": "/home/simulator/IC-IA-webots_loop/simulation_results/",
     "simulation_repeat": "6",
+    "max_attempts": "18",
     "average_time_in_each_simulation": "160",
     "webots_initiation_time": "15",
     "control_program_initiation_time": "20",
@@ -87,6 +90,14 @@ Example:
 ===========================================================================
 SUPPORTED FIELDS
 ===========================================================================
+
+max_attempts
+- Optional
+- Hard limit on the total number of attempts for that experiment
+- If omitted, the launcher keeps trying until it gets all valid simulations
+- Example:
+  "simulation_repeat": "60",
+  "max_attempts": "180"
 
 sensor_noise.world_random_seed
 - Optional
@@ -202,3 +213,5 @@ IMPORTANT NOTES
   attempt_0007__TIMEOUT or attempt_0014__ERROR_rc1.
 - The summary log reports how many attempts were needed to obtain the requested
   number of valid simulations.
+- If max_attempts is reached first, the experiment stops and the summary log
+  records that it ended before reaching the requested number of valid runs.

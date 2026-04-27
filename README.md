@@ -42,6 +42,7 @@ Antes de começar, certifique-se de ter os seguintes softwares instalados:
         "end_point_y": "5.6",
         
         "simulation_repeat": "25",
+        "max_attempts": "75",
         "average_time_in_each_simulation": "160",
         "webots_initiation_time": "15",
         "control_program_initiation_time": "20"
@@ -61,6 +62,7 @@ Antes de começar, certifique-se de ter os seguintes softwares instalados:
    - Ler as configurações do arquivo `simulationSetup.json`.
    - Configurar e iniciar as simulações no **Webots**.
    - Continuar tentando até obter a quantidade de simulações válidas definida em `simulation_repeat`.
+   - Respeitar `max_attempts`, se ele estiver configurado.
    - Salvar as válidas no diretório principal do experimento e mover as inválidas para `failed_simulations/`.
 
 Para executar em container Docker, consulte [DOCKER.md](DOCKER.md).

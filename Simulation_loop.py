@@ -508,6 +508,10 @@ if __name__ == "__main__":
         noise_name_suffix = parse_optional_noise_label(actual_setup, sensor_noise)
 
         simulation_repeat = int(actual_setup["simulation_repeat"])
+        max_attempts_raw = actual_setup.get("max_attempts")
+        max_attempts = None if max_attempts_raw in (None, "", 0, "0") else int(max_attempts_raw)
+        if max_attempts is not None and max_attempts < 1:
+            raise ValueError("'max_attempts' must be a positive integer when provided.")
         simulation_time = float(actual_setup["average_time_in_each_simulation"])
         Webots_initiation_time = float(actual_setup["webots_initiation_time"])
         control_program_initiation_time = float(actual_setup["control_program_initiation_time"])
@@ -612,6 +616,7 @@ if __name__ == "__main__":
         failed_simulations_count = 0
         time_limit_count = 0
         process_termination_count = 0
+        stopped_due_to_max_attempts = False
         simulations_time_limit = []
         simulations_process_termination = []
         simulations_control_program_success = []
@@ -623,6 +628,13 @@ if __name__ == "__main__":
         # Loop de tentativas até atingir o número de simulações válidas
         # ---------------------------------------------------------------------
         while valid_simulations_count < simulation_repeat:
+            if max_attempts is not None and total_attempts >= max_attempts:
+                stopped_due_to_max_attempts = True
+                print(
+                    f"Maximum number of attempts reached ({max_attempts}) before obtaining "
+                    f"{simulation_repeat} valid simulations."
+                )
+                break
 
             total_attempts += 1
             attempt_label = f"attempt_{str(total_attempts).zfill(4)}"
@@ -833,6 +845,8 @@ if __name__ == "__main__":
             log_file.write("Requested number of valid simulations: {}\n".format(simulation_repeat))
             log_file.write("Number of valid simulations obtained: {}\n".format(valid_simulations_count))
             log_file.write("Total number of attempts: {}\n".format(total_attempts))
+            log_file.write("Maximum number of attempts allowed: {}\n".format(max_attempts if max_attempts is not None else "unlimited"))
+            log_file.write("Stopped due to max_attempts: {}\n".format("YES" if stopped_due_to_max_attempts else "NO"))
             log_file.write("Number of failed attempts: {}\n".format(failed_simulations_count))
             log_file.write("Failed attempts folder: {}\n".format(failed_simulations_root))
 
